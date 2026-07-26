@@ -40,6 +40,33 @@
       "optional": true
     }
   },
+  "keywords": [
+    "react",
+    "grid",
+    "data-grid",
+    "datagrid",
+    "table",
+    "virtualization",
+    "virtual-scroll",
+    "excel",
+    "pinning",
+    "sorting",
+    "filtering",
+    "context-menu",
+    "ui-components",
+    "typescript",
+    "pagination"
+  ],
+  "author": "OpenDen",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openden/v-grid.git"
+  },
+  "bugs": {
+    "url": "https://github.com/openden/v-grid/issues"
+  },
+  "homepage": "https://github.com/openden/v-grid#readme",
   "dependencies": {
     "zustand": "^4.5.2"
   },

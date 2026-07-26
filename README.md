@@ -2,10 +2,11 @@
 
 **Ultra-fast, lightweight, zero-dependency React data grid with virtualization, pinning, sorting, filtering, editing, row grouping, context menus, pagination, and Excel exports.**
 
+[![npm version](https://img.shields.io/npm/v/@openden/v-grid.svg?style=flat-square&color=cb3837)](https://www.npmjs.com/package/@openden/v-grid)
+[![npm downloads](https://img.shields.io/npm/dm/@openden/v-grid.svg?style=flat-square&color=blue)](https://www.npmjs.com/package/@openden/v-grid)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue)](https://www.typescriptlang.org/)
-[![Zero global CSS](https://img.shields.io/badge/CSS-scoped%20%7C%20no%20global%20bleed-green)]()
 [![React 18+](https://img.shields.io/badge/React-18%2B-61dafb)]()
-[![License](https://img.shields.io/badge/License-MIT-brightgreen)]()
+[![License](https://img.shields.io/badge/License-MIT-brightgreen)](https://opensource.org/licenses/MIT)
 
 ---
 
