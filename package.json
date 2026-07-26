@@ -1,0 +1,57 @@
+{
+  "name": "@openden/v-grid",
+  "version": "1.0.5",
+  "description": "Ultra-fast, fully-featured React data grid with virtualization, pinning, sorting, filtering, editing, and more.",
+  "type": "module",
+  "main": "./dist/v-grid.cjs",
+  "module": "./dist/v-grid.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/v-grid.js",
+      "require": "./dist/v-grid.cjs"
+    },
+    "./excel": {
+      "import": "./dist/excel.js",
+      "require": "./dist/excel.cjs"
+    },
+    "./styles": "./dist/style.css"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "build:lib": "tsc && vite build --config vite.lib.config.ts",
+    "release": "node scripts/prepare-release.js",
+    "restore-readme": "node scripts/restore-readme.js",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0",
+    "xlsx": ">=0.18.5"
+  },
+  "peerDependenciesMeta": {
+    "xlsx": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "zustand": "^4.5.2"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.5.3",
+    "vite": "^5.4.1",
+    "vite-plugin-dts": "^4.0.0"
+  }
+}

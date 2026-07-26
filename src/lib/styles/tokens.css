@@ -1,0 +1,183 @@
+/* ============================================================
+   V-GRID — Design Tokens (CSS Custom Properties)
+   All scoped inside .vgrid-root — zero global pollution
+   ============================================================ */
+
+.vgrid-root {
+  /* ── Typography ─────────────────────────────────────────── */
+  --vg-font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  --vg-font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --vg-font-size-sm: 12px;
+  --vg-font-size-base: 13px;
+  --vg-font-size-md: 14px;
+  --vg-font-weight-normal: 400;
+  --vg-font-weight-medium: 500;
+  --vg-font-weight-bold: 600;
+
+  /* ── Spacing ─────────────────────────────────────────────── */
+  --vg-cell-padding-h: 12px;
+  --vg-cell-padding-v: 0px;
+  --vg-header-padding-h: 12px;
+
+  /* ── Sizing ──────────────────────────────────────────────── */
+  --vg-row-height: 40px;
+  --vg-header-height: 48px;
+  --vg-filter-height: 36px;
+  --vg-border-radius: 6px;
+  --vg-scrollbar-width: 8px;
+  --vg-resize-handle-width: 4px;
+  --vg-checkbox-size: 16px;
+
+  /* ── Borders ─────────────────────────────────────────────── */
+  --vg-border-width: 1px;
+  --vg-border-style: solid;
+
+  /* ── Transitions ─────────────────────────────────────────── */
+  --vg-transition-fast: 100ms ease;
+  --vg-transition-base: 150ms ease;
+  --vg-transition-slow: 250ms ease;
+
+  /* ── Z-index Layers ──────────────────────────────────────── */
+  --vg-z-header: 10;
+  --vg-z-pinned: 11;
+  --vg-z-overlay: 20;
+  --vg-z-editor: 30;
+  --vg-z-tooltip: 40;
+}
+
+/* ============================================================
+   LIGHT THEME (default)
+   ============================================================ */
+.vgrid-root,
+.vgrid-root[data-theme='light'] {
+  /* Backgrounds */
+  --vg-bg-grid: #ffffff;
+  --vg-bg-header: #f8f9fa;
+  --vg-bg-header-hover: #eef0f3;
+  --vg-bg-row-even: #ffffff;
+  --vg-bg-row-odd: #fafbfc;
+  --vg-bg-row-hover: #f0f4ff;
+  --vg-bg-row-selected: #e8effe;
+  --vg-bg-row-selected-hover: #dce7fd;
+  --vg-bg-pinned: #f4f6f8;
+  --vg-bg-cell-editing: #ffffff;
+  --vg-bg-filter: #ffffff;
+  --vg-bg-filter-active: #eef2ff;
+  --vg-bg-range: rgba(74, 108, 247, 0.12);
+  --vg-bg-range-border: rgba(74, 108, 247, 0.8);
+  --vg-bg-detail: #f5f7fa;
+  --vg-bg-fullwidth: #fff8e1;
+  --vg-bg-tooltip: #1e2330;
+
+  /* Text */
+  --vg-text-primary: #1a1d2e;
+  --vg-text-secondary: #5a6072;
+  --vg-text-muted: #9098ad;
+  --vg-text-header: #374151;
+  --vg-text-selected: #1a3fa8;
+  --vg-text-tooltip: #f0f2f8;
+  --vg-text-placeholder: #b0b8c9;
+
+  /* Borders */
+  --vg-border-color: #e2e6ec;
+  --vg-border-header: #d0d5de;
+  --vg-border-focus: #4a6cf7;
+  --vg-border-editing: #4a6cf7;
+
+  /* Accent */
+  --vg-accent: #4a6cf7;
+  --vg-accent-light: #eef2ff;
+  --vg-accent-dark: #3451d1;
+  --vg-accent-danger: #ef4444;
+  --vg-accent-success: #10b981;
+  --vg-accent-warning: #f59e0b;
+
+  /* Checkbox */
+  --vg-checkbox-bg: #ffffff;
+  --vg-checkbox-checked-bg: #4a6cf7;
+  --vg-checkbox-border: #c8cdd8;
+
+  /* Scrollbar */
+  --vg-scrollbar-track: #f0f2f6;
+  --vg-scrollbar-thumb: #c5cad6;
+  --vg-scrollbar-thumb-hover: #9aa1b4;
+
+  /* Sort icon */
+  --vg-sort-icon-color: #9098ad;
+  --vg-sort-icon-active: #4a6cf7;
+
+  /* Shadows */
+  --vg-shadow-header: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --vg-shadow-pinned: 4px 0 8px rgba(0, 0, 0, 0.08);
+  --vg-shadow-pinned-right: -4px 0 8px rgba(0, 0, 0, 0.08);
+  --vg-shadow-editor: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --vg-shadow-tooltip: 0 8px 24px rgba(0, 0, 0, 0.16);
+}
+
+/* ============================================================
+   DARK THEME
+   ============================================================ */
+.vgrid-root[data-theme='dark'] {
+  /* Backgrounds */
+  --vg-bg-grid: #0f1117;
+  --vg-bg-header: #161b27;
+  --vg-bg-header-hover: #1e2535;
+  --vg-bg-row-even: #0f1117;
+  --vg-bg-row-odd: #131720;
+  --vg-bg-row-hover: #1a2035;
+  --vg-bg-row-selected: #1e2d52;
+  --vg-bg-row-selected-hover: #243460;
+  --vg-bg-pinned: #141923;
+  --vg-bg-cell-editing: #1a2035;
+  --vg-bg-filter: #161b27;
+  --vg-bg-filter-active: #1e2747;
+  --vg-bg-range: rgba(100, 139, 255, 0.15);
+  --vg-bg-range-border: rgba(100, 139, 255, 0.7);
+  --vg-bg-detail: #111520;
+  --vg-bg-fullwidth: #1a160a;
+  --vg-bg-tooltip: #2a3050;
+
+  /* Text */
+  --vg-text-primary: #e4e8f0;
+  --vg-text-secondary: #8b95ad;
+  --vg-text-muted: #5a6480;
+  --vg-text-header: #c2c9d8;
+  --vg-text-selected: #7fa8ff;
+  --vg-text-tooltip: #e4e8f0;
+  --vg-text-placeholder: #3d4560;
+
+  /* Borders */
+  --vg-border-color: #1e2535;
+  --vg-border-header: #242d42;
+  --vg-border-focus: #648bff;
+  --vg-border-editing: #648bff;
+
+  /* Accent */
+  --vg-accent: #648bff;
+  --vg-accent-light: #1e2747;
+  --vg-accent-dark: #4a6cf7;
+  --vg-accent-danger: #f87171;
+  --vg-accent-success: #34d399;
+  --vg-accent-warning: #fbbf24;
+
+  /* Checkbox */
+  --vg-checkbox-bg: #1a2035;
+  --vg-checkbox-checked-bg: #648bff;
+  --vg-checkbox-border: #2e3a55;
+
+  /* Scrollbar */
+  --vg-scrollbar-track: #161b27;
+  --vg-scrollbar-thumb: #2a3550;
+  --vg-scrollbar-thumb-hover: #3d4f72;
+
+  /* Sort icon */
+  --vg-sort-icon-color: #5a6480;
+  --vg-sort-icon-active: #648bff;
+
+  /* Shadows */
+  --vg-shadow-header: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --vg-shadow-pinned: 4px 0 8px rgba(0, 0, 0, 0.4);
+  --vg-shadow-pinned-right: -4px 0 8px rgba(0, 0, 0, 0.4);
+  --vg-shadow-editor: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --vg-shadow-tooltip: 0 8px 24px rgba(0, 0, 0, 0.5);
+}

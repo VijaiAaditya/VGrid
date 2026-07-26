@@ -1,0 +1,875 @@
+/* ============================================================
+   V-GRID — Core Layout Styles
+   ALL selectors are scoped to .vgrid-root — zero global bleed
+   ============================================================ */
+
+/* ── Reset inside grid only ──────────────────────────────── */
+.vgrid-root *,
+.vgrid-root *::before,
+.vgrid-root *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Root Container ──────────────────────────────────────── */
+.vgrid-root {
+  font-family: var(--vg-font-family);
+  font-size: var(--vg-font-size-base);
+  font-weight: var(--vg-font-weight-normal);
+  color: var(--vg-text-primary);
+  background: var(--vg-bg-grid);
+  border: var(--vg-border-width) var(--vg-border-style) var(--vg-border-color);
+  border-radius: var(--vg-border-radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  /* contain layout so nothing bleeds out */
+  contain: strict;
+  isolation: isolate;
+}
+
+/* ── Toolbar (search bar area) ───────────────────────────── */
+.vgrid-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: var(--vg-border-width) var(--vg-border-style) var(--vg-border-color);
+  background: var(--vg-bg-header);
+  flex-shrink: 0;
+}
+
+.vgrid-search-wrap {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.vgrid-search-icon {
+  position: absolute;
+  left: 10px;
+  color: var(--vg-text-muted);
+  pointer-events: none;
+  display: flex;
+}
+
+.vgrid-search-input {
+  width: 100%;
+  height: 32px;
+  padding: 0 10px 0 34px;
+  border: var(--vg-border-width) var(--vg-border-style) var(--vg-border-color);
+  border-radius: 6px;
+  background: var(--vg-bg-grid);
+  color: var(--vg-text-primary);
+  font-family: var(--vg-font-family);
+  font-size: var(--vg-font-size-sm);
+  outline: none;
+  transition: border-color var(--vg-transition-fast);
+}
+
+.vgrid-search-input:focus {
+  border-color: var(--vg-border-focus);
+  box-shadow: 0 0 0 2px var(--vg-accent-light);
+}
+
+.vgrid-search-input::placeholder {
+  color: var(--vg-text-placeholder);
+}
+
+/* ── Header Wrapper ──────────────────────────────────────── */
+.vgrid-header-wrapper {
+  flex-shrink: 0;
+  overflow: hidden;
+  background: var(--vg-bg-header);
+  border-bottom: var(--vg-border-width) var(--vg-border-style) var(--vg-border-header);
+  box-shadow: var(--vg-shadow-header);
+  position: relative;
+  z-index: var(--vg-z-header);
+  will-change: scroll-position;
+}
+
+.vgrid-header-inner {
+  position: relative;
+}
+
+.vgrid-header-row {
+  display: flex;
+  height: var(--vg-header-height);
+  align-items: stretch;
+}
+
+.vgrid-header-group-row {
+  display: flex;
+  align-items: stretch;
+  border-bottom: var(--vg-border-width) var(--vg-border-style) var(--vg-border-color);
+}
+
+/* ── Header Cell ─────────────────────────────────────────── */
+.vgrid-header-cell {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--vg-header-padding-h);
+  gap: 6px;
+  border-right: var(--vg-border-width) var(--vg-border-style) var(--vg-border-color);
+  color: var(--vg-text-header);
+  font-weight: var(--vg-font-weight-medium);
+  font-size: var(--vg-font-size-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  position: relative;
+  user-select: none;
+  transition: background var(--vg-transition-fast);
+  flex-shrink: 0;
+}
+
+.vgrid-header-cell:last-child {
+  border-right: none;
+}
+
+.vgrid-header-cell--sortable {
+  cursor: pointer;
+}
+
+.vgrid-header-cell--sortable:hover {
+  background: var(--vg-bg-header-hover);
+}
+
+.vgrid-header-cell--sorted {
+  color: var(--vg-accent);
+  background: var(--vg-accent-light);
+}
+
+.vgrid-header-cell__label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vgrid-header-cell__sort-icon {
+  display: flex;
+  align-items: center;
+  color: var(--vg-sort-icon-color);
+  flex-shrink: 0;
+  font-size: 11px;
+  gap: 2px;
+}
+
+.vgrid-header-cell--sorted .vgrid-header-cell__sort-icon {
+  color: var(--vg-sort-icon-active);
+}
+
+.vgrid-sort-index {
+  font-size: 10px;
+  font-weight: var(--vg-font-weight-bold);
+  color: var(--vg-accent);
+  min-width: 12px;
+}
+
+.vgrid-header-cell--dragging {
+  opacity: 0.5;
+  background: var(--vg-bg-header-hover);
+}
+
+.vgrid-header-cell--drag-over {
+  box-shadow: inset 4px 0 0 0 var(--vg-accent);
+}
+
+/* ── Column Resize Handle ────────────────────────────────── */
+.vgrid-resize-handle {
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: 0;
+  width: var(--vg-resize-handle-width);
+  cursor: col-resize;
+  z-index: 2;
+  background: transparent;
+  transition: background var(--vg-transition-fast);
+}
+
+.vgrid-resize-handle:hover,
+.vgrid-resize-handle--active {
+  background: var(--vg-accent);
+}
+
+/* ── Filter Row ──────────────────────────────────────────── */
+.vgrid-filter-row {
+  display: flex;
+  height: var(--vg-filter-height);
+  align-items: center;
+  border-top: var(--vg-border-width) var(--vg-border-style) var(--vg-border-color);
+  background: var(--vg-bg-filter);
+}
+
+.vgrid-filter-cell {
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  border-right: var(--vg-border-width) var(--vg-border-style) var(--vg-border-color);
+  height: 100%;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.vgrid-filter-cell:last-child {
+  border-right: none;
+}
+
+.vgrid-filter-input {
+  width: 100%;
+  height: 26px;
+  padding: 0 8px;
+  border: var(--vg-border-width) var(--vg-border-style) var(--vg-border-color);
+  border-radius: 4px;
+  background: var(--vg-bg-cell-editing);
+  color: var(--vg-text-primary);
+  font-family: var(--vg-font-family);
+  font-size: var(--vg-font-size-sm);
+  outline: none;
+  transition: border-color var(--vg-transition-fast);
+}
+
+.vgrid-filter-input:focus {
+  border-color: var(--vg-border-focus);
+  box-shadow: 0 0 0 2px var(--vg-accent-light);
+}
+
+.vgrid-filter-input--active {
+  border-color: var(--vg-accent);
+  background: var(--vg-bg-filter-active);
+}
+
+/* ── Body Container ──────────────────────────────────────── */
+.vgrid-body-wrapper {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+  /* Custom scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: var(--vg-scrollbar-thumb) var(--vg-scrollbar-track);
+  will-change: scroll-position;
+}
+
+.vgrid-body-wrapper::-webkit-scrollbar {
+  width: var(--vg-scrollbar-width);
+  height: var(--vg-scrollbar-width);
+}
+
+.vgrid-body-wrapper::-webkit-scrollbar-track {
+  background: var(--vg-scrollbar-track);
+}
+
+.vgrid-body-wrapper::-webkit-scrollbar-thumb {
+  background: var(--vg-scrollbar-thumb);
+  border-radius: 4px;
+}
+
+.vgrid-body-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--vg-scrollbar-thumb-hover);
+}
+
+.vgrid-body-wrapper::-webkit-scrollbar-corner {
+  background: var(--vg-scrollbar-track);
+}
+
+.vgrid-body-inner {
+  position: relative;
+}
+
+/* ── Row ─────────────────────────────────────────────────── */
+.vgrid-row {
+  display: flex;
+  align-items: stretch;
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-bottom: var(--vg-border-width) var(--vg-border-style) var(--vg-border-color);
+  transition: background var(--vg-transition-fast);
+  will-change: transform;
+}
+
+.vgrid-row--even {
+  background: var(--vg-bg-row-even);
+}
+
+.vgrid-row--odd {
+  background: var(--vg-bg-row-odd);
+}
+
+.vgrid-row:hover {
+  background: var(--vg-bg-row-hover);
+}
+
+.vgrid-row--selected {
+  background: var(--vg-bg-row-selected) !important;
+  color: var(--vg-text-selected);
+}
+
+.vgrid-row--selected:hover {
+  background: var(--vg-bg-row-selected-hover) !important;
+}
+
+/* ── Cell ────────────────────────────────────────────────── */
+.vgrid-cell {
+  display: flex;
+  align-items: center;
+  padding: var(--vg-cell-padding-v) var(--vg-cell-padding-h);
+  border-right: var(--vg-border-width) var(--vg-border-style) var(--vg-border-color);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  flex-shrink: 0;
+  position: relative;
+  outline: none;
+}
+
+.vgrid-cell:last-child {
+  border-right: none;
+}
+
+.vgrid-cell--focused {
+  box-shadow: inset 0 0 0 2px var(--vg-border-focus);
+}
+
+.vgrid-cell--editing {
+  padding: 4px 6px;
+  overflow: visible;
+  z-index: var(--vg-z-editor);
+}
+
+.vgrid-cell__content {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+/* ── Cell Editor ─────────────────────────────────────────── */
+.vgrid-cell-editor {
+  width: 100%;
+  height: calc(var(--vg-row-height) - 8px);
+  padding: 0 8px;
+  border: var(--vg-border-width) var(--vg-border-style) var(--vg-border-editing);
+  border-radius: 4px;
+  background: var(--vg-bg-cell-editing);
+  color: var(--vg-text-primary);
+  font-family: var(--vg-font-family);
+  font-size: var(--vg-font-size-base);
+  outline: none;
+  box-shadow: var(--vg-shadow-editor);
+}
+
+.vgrid-cell-editor:focus {
+  box-shadow: var(--vg-shadow-editor), 0 0 0 2px var(--vg-accent-light);
+}
+
+.vgrid-cell-editor--select {
+  cursor: pointer;
+}
+
+/* ── Checkbox ────────────────────────────────────────────── */
+.vgrid-checkbox-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  flex-shrink: 0;
+  border-right: var(--vg-border-width) var(--vg-border-style) var(--vg-border-color);
+}
+
+.vgrid-checkbox {
+  width: var(--vg-checkbox-size);
+  height: var(--vg-checkbox-size);
+  border: 2px solid var(--vg-checkbox-border);
+  border-radius: 4px;
+  background: var(--vg-checkbox-bg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all var(--vg-transition-fast);
+  position: relative;
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+}
+
+.vgrid-checkbox:checked {
+  background: var(--vg-checkbox-checked-bg);
+  border-color: var(--vg-checkbox-checked-bg);
+}
+
+.vgrid-checkbox:checked::after {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 8px;
+  border: 2px solid white;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg) translate(-1px, -1px);
+}
+
+.vgrid-checkbox:indeterminate {
+  background: var(--vg-checkbox-checked-bg);
+  border-color: var(--vg-checkbox-checked-bg);
+}
+
+.vgrid-checkbox:indeterminate::after {
+  content: '';
+  display: block;
+  width: 8px;
+  height: 2px;
+  background: white;
+  border-radius: 1px;
+}
+
+.vgrid-checkbox:focus {
+  box-shadow: 0 0 0 2px var(--vg-accent-light);
+}
+
+/* ── Pinned Columns ──────────────────────────────────────── */
+.vgrid-pinned-left {
+  position: sticky;
+  left: 0;
+  z-index: var(--vg-z-pinned);
+  background: var(--vg-bg-pinned);
+  box-shadow: var(--vg-shadow-pinned);
+}
+
+.vgrid-pinned-right {
+  position: sticky;
+  right: 0;
+  z-index: var(--vg-z-pinned);
+  background: var(--vg-bg-pinned);
+  box-shadow: var(--vg-shadow-pinned-right);
+}
+
+/* ── Pinned Rows (Top/Bottom) ────────────────────────────── */
+.vgrid-pinned-rows-top,
+.vgrid-pinned-rows-bottom {
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+  z-index: var(--vg-z-header);
+  background: var(--vg-bg-pinned);
+}
+
+.vgrid-pinned-rows-top {
+  border-bottom: 2px solid var(--vg-border-header);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.vgrid-pinned-rows-bottom {
+  border-top: 2px solid var(--vg-border-header);
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.vgrid-pinned-row {
+  display: flex;
+  align-items: stretch;
+  border-bottom: var(--vg-border-width) var(--vg-border-style) var(--vg-border-color);
+  background: var(--vg-bg-pinned);
+  font-weight: var(--vg-font-weight-medium);
+}
+
+/* ── Full-Width Row ──────────────────────────────────────── */
+.vgrid-fullwidth-row {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: var(--vg-bg-fullwidth);
+  border-bottom: var(--vg-border-width) var(--vg-border-style) var(--vg-border-color);
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  overflow: hidden;
+}
+
+/* ── Master Detail ───────────────────────────────────────── */
+.vgrid-master-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--vg-text-secondary);
+  background: transparent;
+  border: none;
+  transition: all var(--vg-transition-fast);
+  flex-shrink: 0;
+}
+
+.vgrid-master-icon:hover {
+  background: var(--vg-accent-light);
+  color: var(--vg-accent);
+}
+
+.vgrid-master-icon--expanded {
+  color: var(--vg-accent);
+  background: var(--vg-accent-light);
+}
+
+.vgrid-detail-row {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: var(--vg-bg-detail);
+  border-bottom: 2px solid var(--vg-border-header);
+  overflow: hidden;
+}
+
+.vgrid-detail-inner {
+  padding: 16px;
+  height: 100%;
+  overflow: auto;
+}
+
+/* ── Range Selection Overlay ─────────────────────────────── */
+.vgrid-range-overlay {
+  position: absolute;
+  pointer-events: none;
+  border: 2px solid var(--vg-bg-range-border);
+  background: var(--vg-bg-range);
+  border-radius: 2px;
+  z-index: var(--vg-z-overlay);
+  transition: none;
+}
+
+/* ── No Rows Overlay ─────────────────────────────────────── */
+.vgrid-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--vg-text-muted);
+  font-size: var(--vg-font-size-md);
+  background: var(--vg-bg-grid);
+  z-index: 5;
+  pointer-events: none;
+}
+
+.vgrid-overlay--loading {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.vgrid-loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--vg-border-color);
+  border-top-color: var(--vg-accent);
+  border-radius: 50%;
+  animation: vg-spin 0.8s linear infinite;
+}
+
+@keyframes vg-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Column Group Header ─────────────────────────────────── */
+.vgrid-group-header-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: var(--vg-border-width) var(--vg-border-style) var(--vg-border-color);
+  border-bottom: var(--vg-border-width) var(--vg-border-style) var(--vg-border-color);
+  padding: 0 var(--vg-header-padding-h);
+  font-weight: var(--vg-font-weight-bold);
+  font-size: var(--vg-font-size-sm);
+  color: var(--vg-text-header);
+  background: var(--vg-bg-header);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: none;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+/* ── Negative cell helper ────────────────────────────────── */
+.vgrid-root .vg-cell--negative {
+  color: var(--vg-accent-danger);
+}
+.vgrid-root .vg-cell--positive {
+  color: var(--vg-accent-success);
+}
+.vgrid-root .vg-cell--bold {
+  font-weight: var(--vg-font-weight-bold);
+}
+.vgrid-root .vg-cell--mono {
+  font-family: var(--vg-font-mono);
+}
+
+/* ============================================================
+   PHASE 2 — Row Grouping
+   ============================================================ */
+
+.vgrid-root .vgrid-group-row {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: var(--vg-bg-header);
+  border-bottom: 1px solid var(--vg-border-color);
+  cursor: pointer;
+  transition: background 0.1s;
+  will-change: transform;
+  z-index: 1;
+}
+
+.vgrid-root .vgrid-group-row:hover {
+  background: var(--vg-bg-row-hover);
+}
+
+.vgrid-root .vgrid-group-label-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.vgrid-root .vgrid-group-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  background: transparent;
+  border: 1px solid var(--vg-border-color);
+  cursor: pointer;
+  color: var(--vg-accent);
+  flex-shrink: 0;
+  transition: background 0.12s, transform 0.12s;
+}
+
+.vgrid-root .vgrid-group-toggle:hover {
+  background: var(--vg-accent);
+  color: #fff;
+}
+
+.vgrid-root .vgrid-group-toggle--open {
+  background: var(--vg-accent);
+  color: #fff;
+}
+
+.vgrid-root .vgrid-group-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: var(--vg-font-weight-bold);
+  font-size: 12px;
+  color: var(--vg-text-primary);
+}
+
+.vgrid-root .vgrid-group-field {
+  color: var(--vg-text-muted);
+  font-weight: normal;
+}
+
+.vgrid-root .vgrid-group-key {
+  color: var(--vg-text-primary);
+}
+
+.vgrid-root .vgrid-group-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 18px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: var(--vg-accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.vgrid-root .vgrid-group-agg-cell {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--vg-cell-padding-x);
+  overflow: hidden;
+  flex-shrink: 0;
+  border-left: 1px solid var(--vg-border-color);
+  height: 100%;
+}
+
+/* ── Tree Data indent ─────────────────────────────────────── */
+.vgrid-root .vgrid-tree-indent {
+  flex-shrink: 0;
+  height: 100%;
+  border-right: 1px solid var(--vg-border-color);
+  opacity: 0.15;
+}
+
+/* ── Row Group Panel ──────────────────────────────────────── */
+.vgrid-root .vgrid-group-panel {
+  flex-shrink: 0;
+  z-index: 4;
+}
+
+/* ── Filter Builder Panel ─────────────────────────────────── */
+.vgrid-root .vgrid-filter-panel {
+  flex-shrink: 0;
+  padding: 12px;
+  border-bottom: 1px solid var(--vg-border-color);
+  background: var(--vg-bg-header);
+  z-index: 3;
+}
+
+/* ── Drag Fill Handle ─────────────────────────────────────── */
+.vgrid-root .vgrid-fill-handle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--vg-accent);
+  border: 2px solid var(--vg-bg-grid);
+  border-radius: 1px;
+  cursor: crosshair;
+  z-index: 10;
+  transform: translate(-50%, -50%);
+}
+
+.vgrid-root .vgrid-fill-handle:hover {
+  transform: translate(-50%, -50%) scale(1.4);
+}
+
+/* ── SSRM / Infinite Loading Row ──────────────────────────── */
+.vgrid-root .vgrid-loading-row {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--vg-text-muted);
+  font-size: 12px;
+  border-bottom: 1px solid var(--vg-border-color);
+  background: var(--vg-bg-grid);
+}
+
+.vgrid-root .vgrid-loading-row::before {
+  content: '';
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--vg-border-color);
+  border-top-color: var(--vg-accent);
+  border-radius: 50%;
+  animation: vgrid-spin 0.7s linear infinite;
+}
+
+/* ── Infinite load sentinel ────────────────────────────────── */
+.vgrid-root .vgrid-infinite-sentinel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  pointer-events: none;
+}
+
+/* ── Undo/Redo indicator (toast) ─────────────────────────── */
+.vgrid-undo-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(30, 37, 53, 0.95);
+  color: #e4e8f0;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  z-index: 99998;
+  pointer-events: none;
+  animation: vgrid-toast-in 0.2s ease, vgrid-toast-out 0.2s ease 1.6s forwards;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  backdrop-filter: blur(8px);
+}
+
+@keyframes vgrid-toast-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+@keyframes vgrid-toast-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* ── Validation error tooltip ────────────────────────────── */
+.vgrid-root .vgrid-validation-error {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 0;
+  background: #ef4444;
+  color: #fff;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(239,68,68,0.3);
+}
+
+.vgrid-root .vgrid-validation-error::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 10px;
+  border: 4px solid transparent;
+  border-top-color: #ef4444;
+}
+
+/* ── Cell with validation error ──────────────────────────── */
+.vgrid-root .vgrid-cell--invalid {
+  border: 1.5px solid #ef4444 !important;
+  background: rgba(239,68,68,0.05) !important;
+}
+
+/* ── Row indent for grouped/tree rows ────────────────────── */
+.vgrid-root .vgrid-row--level-1 .vgrid-cell:first-child { padding-left: calc(var(--vg-cell-padding-x) + 20px); }
+.vgrid-root .vgrid-row--level-2 .vgrid-cell:first-child { padding-left: calc(var(--vg-cell-padding-x) + 40px); }
+.vgrid-root .vgrid-row--level-3 .vgrid-cell:first-child { padding-left: calc(var(--vg-cell-padding-x) + 60px); }
+.vgrid-root .vgrid-row--level-4 .vgrid-cell:first-child { padding-left: calc(var(--vg-cell-padding-x) + 80px); }
+
+/* ── Pinned rows ─────────────────────────────────────────── */
+.vgrid-pinned-rows-top,
+.vgrid-pinned-rows-bottom {
+  flex-shrink: 0;
+  z-index: 3;
+  background: var(--vg-bg-header);
+  border-color: var(--vg-border-color);
+}
+
+.vgrid-pinned-rows-top {
+  border-bottom: 2px solid var(--vg-accent);
+}
+
+.vgrid-pinned-rows-bottom {
+  border-top: 2px solid var(--vg-accent);
+}
+
+.vgrid-pinned-row {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--vg-border-color);
+  font-weight: var(--vg-font-weight-bold);
+}
