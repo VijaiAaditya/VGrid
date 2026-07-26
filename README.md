@@ -325,3 +325,6 @@ V_Grid provides comprehensive event callbacks for user interactions, column mani
 | `onRowGroupOpened` | `{ node: GroupNode<T> }` | Fired when a row group node is expanded or collapsed. |
 | `onRowGroupChanged` | `{ groupColIds: string[] }` | Fired when active row grouping columns change. |
 
+### [GitHub Repository](https://github.com/VijaiAaditya/VGrid)
+
+### [NPM Package](https://www.npmjs.com/package/@openden/v-grid)

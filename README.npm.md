@@ -24,5 +24,6 @@ export function App() {
 }
 ```
 
-## Documentation & Live Demos
-For full documentation, API reference, and interactive examples, visit our [GitHub Repository](https://github.com/VijaiAaditya/VGrid).
+### [GitHub Repository](https://github.com/VijaiAaditya/VGrid)
+
+### [NPM Package](https://www.npmjs.com/package/@openden/v-grid)
