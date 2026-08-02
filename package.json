@@ -1,6 +1,6 @@
 {
   "name": "@openden/v-grid",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Ultra-fast, fully-featured React data grid with virtualization, pinning, sorting, filtering, editing, and more.",
   "type": "module",
   "main": "./dist/v-grid.cjs",

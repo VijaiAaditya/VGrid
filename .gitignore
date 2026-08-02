@@ -19,8 +19,6 @@ dist-ssr
 .DS_Store
 *.suo
 *.ntvsca*
-*.njsproj
-*.sln
 *.sw?
 /.vs/V_Grid/CopilotIndices/18.8.1093.27292
 /.vs/V_Grid.slnx/FileContentIndex/0eb09c45-8d60-4c77-ab5c-e4cc2259878e.vsidx
@@ -38,3 +36,4 @@ dist-ssr
 /.vs/V_Grid.slnx/FileContentIndex/9f5405fc-6f8e-4447-bdb6-19ebcbdb2e38.vsidx
 /.vs/V_Grid.slnx/FileContentIndex/9f5405fc-6f8e-4447-bdb6-19ebcbdb2e38.vsidx
 /.vs/slnx.sqlite
+.vs/V_Grid.slnx/v18/.wsuo
