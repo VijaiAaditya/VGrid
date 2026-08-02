@@ -22,14 +22,16 @@ export function App() {
     />
   )
 }
-```
-
-## Feedback & Issues
-
-Have suggestions, feature requests, or found a bug? We'd love to hear from you! Please submit your feedback and raise issues on [GitHub Issues](https://github.com/VijaiAaditya/VGrid/issues).
 
 ---
 
 ### [GitHub Repository](https://github.com/VijaiAaditya/VGrid)
 
 ### [NPM Package](https://www.npmjs.com/package/@openden/v-grid)
+
+```
+
+## Feedback & Issues
+
+Have suggestions, feature requests, or found a bug? We'd love to hear from you! Please submit your feedback and raise issues on [GitHub Issues](https://github.com/VijaiAaditya/VGrid/issues).
+
