@@ -2,6 +2,7 @@ import React, { memo, useCallback, useRef, useEffect, useState } from 'react'
 import type { InternalColDef } from '../store/createGridStore'
 import type { RowData, RowNode, CellPosition, GridApi, CellClickedEvent, CellDoubleClickedEvent, CellValueChangedEvent } from '../types'
 import { getFieldValue } from '../store/createGridStore'
+import { JsonModal } from './JsonModal'
 
 // ─── Cell Editor Components ───────────────────────────────────────────────────
 
@@ -110,15 +111,51 @@ export const GridCell = memo(<T extends RowData>(props: CellProps<T>) => {
     value = getFieldValue(node.data as RowData, col.field)
   }
 
+  // Check if this column is configured as JSON
+  const isJsonCol = col.columnType === 'json' || col.cellEditor === 'json'
+  const [isJsonModalOpen, setIsJsonModalOpen] = useState(false)
+
   // Format for display
   let displayValue: React.ReactNode
   if (col.cellRenderer) {
     displayValue = col.cellRenderer({ value, data: node.data, colDef: col, rowIndex: node.rowIndex, api })
   } else if (col.valueFormatter) {
     displayValue = col.valueFormatter({ value, data: node.data, colDef: col })
+  } else if (isJsonCol) {
+    let jsonText = ''
+    if (typeof value === 'object' && value !== null) {
+      try { jsonText = JSON.stringify(value) } catch { jsonText = String(value) }
+    } else {
+      jsonText = value == null ? '' : String(value)
+    }
+    displayValue = (
+      <div className="vgrid-cell-json">
+        <span className="vgrid-cell-json__text" title={jsonText}>{jsonText || '{ }'}</span>
+        <button
+          type="button"
+          className="vgrid-cell-json__expand-btn"
+          onClick={(e) => {
+            e.stopPropagation()
+            setIsJsonModalOpen(true)
+          }}
+          title="Expand JSON Popup (Double click)"
+        >
+          ⤢
+        </button>
+      </div>
+    )
   } else {
     displayValue = value == null ? '' : String(value)
   }
+
+  const pos: CellPosition = { rowIndex: node.rowIndex, colId: col._colId }
+
+  const handleDoubleClick = useCallback((e: React.MouseEvent) => {
+    if (isJsonCol) {
+      setIsJsonModalOpen(true)
+    }
+    onCellDoubleClick(pos, e)
+  }, [isJsonCol, onCellDoubleClick, pos])
 
   // Cell class
   const customClass = typeof col.cellClass === 'function'
@@ -130,6 +167,7 @@ export const GridCell = memo(<T extends RowData>(props: CellProps<T>) => {
     isFocused ? 'vgrid-cell--focused' : '',
     isEditing ? 'vgrid-cell--editing' : '',
     isInRange ? 'vgrid-cell--in-range' : '',
+    isJsonCol ? 'vgrid-cell--json' : '',
     customClass,
     className ?? '',
   ].filter(Boolean).join(' ')
@@ -147,8 +185,6 @@ export const GridCell = memo(<T extends RowData>(props: CellProps<T>) => {
     ...style,
   }
 
-  const pos: CellPosition = { rowIndex: node.rowIndex, colId: col._colId }
-
   const editorType = col.cellEditor ?? 'text'
   const editorParams = col.cellEditorParams ?? {}
 
@@ -161,6 +197,10 @@ export const GridCell = memo(<T extends RowData>(props: CellProps<T>) => {
     tooltip = v == null ? undefined : String(v)
   }
 
+  const isEditable = typeof col.editable === 'function'
+    ? col.editable({ value, data: node.data, rowIndex: node.rowIndex })
+    : col.editable !== false
+
   return (
     <div
       className={cellClass}
@@ -169,13 +209,13 @@ export const GridCell = memo(<T extends RowData>(props: CellProps<T>) => {
       tabIndex={isFocused ? 0 : -1}
       title={tooltip}
       onClick={(e) => onCellClick(pos, e)}
-      onDoubleClick={(e) => onCellDoubleClick(pos, e)}
+      onDoubleClick={handleDoubleClick}
       onMouseDown={(e) => onCellMouseDown(pos, e)}
       onMouseEnter={() => onCellMouseEnter(pos)}
       data-col-id={col._colId}
       data-row-index={node.rowIndex}
     >
-      {isEditing ? (
+      {isEditing && !isJsonCol ? (
         <CellEditorComponent
           value={value}
           type={editorType}
@@ -190,6 +230,18 @@ export const GridCell = memo(<T extends RowData>(props: CellProps<T>) => {
         <div className="vgrid-cell__content">
           {displayValue}
         </div>
+      )}
+
+      {/* JSON Modal Dialog for JSON columns */}
+      {isJsonCol && (
+        <JsonModal
+          isOpen={isJsonModalOpen}
+          title={`${col.headerName ?? col.field ?? 'JSON'} (Row #${node.rowIndex + 1})`}
+          value={value}
+          readOnly={!isEditable}
+          onSave={(newVal) => onCommitEdit(col._colId, node.rowIndex, newVal)}
+          onClose={() => setIsJsonModalOpen(false)}
+        />
       )}
     </div>
   )

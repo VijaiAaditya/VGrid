@@ -873,3 +873,59 @@
   border-bottom: 1px solid var(--vg-border-color);
   font-weight: var(--vg-font-weight-bold);
 }
+
+/* ── JSON Column & Cell Styling ───────────────────────────── */
+.vgrid-root .vgrid-cell--json {
+  font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+  font-size: var(--vg-font-size-xs, 12px);
+}
+
+.vgrid-root .vgrid-cell-json {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 6px;
+  overflow: hidden;
+}
+
+.vgrid-root .vgrid-cell-json__text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0.9;
+  flex: 1;
+  font-size: 11px;
+}
+
+.vgrid-root .vgrid-cell-json__expand-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border-radius: 4px;
+  border: 1px solid var(--vg-border-color, #cbd5e1);
+  background: var(--vg-bg-header, #f1f5f9);
+  color: var(--vg-text-secondary, #475569);
+  font-size: 11px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.vgrid-root .vgrid-cell:hover .vgrid-cell-json__expand-btn,
+.vgrid-root .vgrid-cell--focused .vgrid-cell-json__expand-btn {
+  opacity: 1;
+  border-color: var(--vg-accent, #6366f1);
+  color: var(--vg-accent, #6366f1);
+  background: var(--vg-accent-light, rgba(99, 102, 241, 0.1));
+}
+
+@keyframes vgrid-fade-in {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+

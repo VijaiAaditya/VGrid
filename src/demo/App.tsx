@@ -287,6 +287,10 @@ export default function App() {
         ],
       },
       {
+        field: 'metadata', headerName: 'Config (JSON)', width: 170,
+        columnType: 'json', editable: true, sortable: false, filter: false,
+      },
+      {
         field: 'status', headerName: 'Status', width: 120, pinned: 'right',
         sortable: true, filter: 'select', editable: true,
         cellEditor: 'select',

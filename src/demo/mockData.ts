@@ -53,6 +53,7 @@ export interface Employee {
   isActive: boolean
   status: string
   projects: number
+  metadata?: Record<string, any>
   _highlight?: boolean
 }
 
@@ -93,6 +94,12 @@ export function generateEmployees(count: number): Employee[] {
       isActive: status === 'Active',
       status,
       projects,
+      metadata: {
+        permissions: role.includes('Lead') || role.includes('Manager') ? ['read', 'write', 'admin'] : ['read'],
+        settings: { theme: i % 2 === 0 ? 'dark' : 'light', notifications: true },
+        skills: ['TypeScript', 'React', 'SQL', 'Python'].slice(0, (i % 4) + 1),
+        lastLogin: `2026-08-0${(i % 4) + 1}T10:30:00Z`
+      }
     })
   }
   return rows

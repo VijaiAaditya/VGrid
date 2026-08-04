@@ -7,6 +7,7 @@ export { Sparkline, createSparklineCellRenderer } from './components/Sparkline'
 export { FilterBuilder } from './components/FilterBuilder'
 export { RowGroupPanel } from './components/RowGroupPanel'
 export { PopupEditor } from './components/PopupEditor'
+export { JsonModal } from './components/JsonModal'
 
 // Phase 3 components
 export { ContextMenu, DEFAULT_CONTEXT_MENU_ITEMS } from './components/ContextMenu'

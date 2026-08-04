@@ -76,9 +76,9 @@ export interface CellClassParams<T = RowData> {
  * Drives default filter, editor, and formatter when not explicitly set.
  * Defaults to 'string' if omitted.
  */
-export type ColumnType = 'string' | 'number' | 'date' | 'boolean'
+export type ColumnType = 'string' | 'number' | 'date' | 'boolean' | 'json'
 
-export type CellEditorType = 'text' | 'number' | 'select' | 'date' | 'textarea'
+export type CellEditorType = 'text' | 'number' | 'select' | 'date' | 'textarea' | 'json'
 
 
 export interface CellEditorParams {
