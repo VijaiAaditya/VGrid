@@ -27,8 +27,8 @@ import '@openden/v-grid/styles'
 
 export function App() {
   const rowData = [
-    { id: 1, name: 'Alice', department: 'Engineering', salary: 95000, status: 'Active' },
-    { id: 2, name: 'Bob', department: 'Sales', salary: 78000, status: 'On Leave' },
+    { id: 1, name: 'Alice', department: 'Engineering', salary: 95000, status: 'Active', config: { theme: 'dark', permissions: ['read', 'write'] } },
+    { id: 2, name: 'Bob', department: 'Sales', salary: 78000, status: 'On Leave', config: { theme: 'light', permissions: ['read'] } },
   ]
 
   const columnDefs = [
@@ -36,6 +36,7 @@ export function App() {
     { field: 'name', headerName: 'Employee Name', sortable: true, filter: 'text' },
     { field: 'department', headerName: 'Department', filter: 'excel', filterParams: { options: ['Engineering', 'Sales', 'HR', 'Marketing'] } },
     { field: 'salary', headerName: 'Salary', filter: 'number', valueFormatter: (p) => `$${Number(p.value).toLocaleString()}` },
+    { field: 'config', headerName: 'User Config (JSON)', columnType: 'json', editable: true, width: 180 },
     { field: 'status', headerName: 'Status', filter: 'select', editable: true, cellEditor: 'select', cellEditorParams: { options: ['Active', 'On Leave', 'Remote'] } },
   ]
 
@@ -194,12 +195,34 @@ const myContextMenuItems: ContextMenuItem<Employee>[] = [
 | `filter` | `'text' \| 'number' \| 'date' \| 'select' \| 'excel' \| boolean` | Column filter type. `'excel'` activates multi-select checklist popup. |
 | `filterParams` | `{ options?: (string \| number)[] }` | Pre-defined options list for `'select'` or `'excel'` dropdown filters. |
 | `editable` | `boolean \| ((params) => boolean)` | Enables editing on this specific column. |
-| `cellEditor` | `'text' \| 'number' \| 'select' \| 'date' \| 'textarea'` | Built-in cell editor type when entering edit mode. |
+| `columnType` | `'string' \| 'number' \| 'date' \| 'boolean' \| 'json'` | Declares column data type. `'json'` renders JSON previews with expand button & popup modal. |
+| `cellEditor` | `'text' \| 'number' \| 'select' \| 'date' \| 'textarea' \| 'json'` | Built-in cell editor type when entering edit mode. |
 | `cellEditorParams` | `{ options?: string[] }` | Option choices passed to `'select'` cell editor. |
 | `cellRenderer` | `(params: CellRendererParams<T>) => ReactNode` | Custom React element renderer for cells in this column. |
 | `headerRenderer` | `(params: HeaderRendererParams<T>) => ReactNode` | Custom React renderer for the column header cell. |
 | `valueGetter` | `(params: ValueGetterParams<T>) => any` | Function to compute dynamic or nested cell values. |
 | `valueFormatter` | `(params: ValueFormatterParams<T>) => string` | Function to format raw values into display text (e.g. currency). |
+
+---
+
+### JSON Column Type (`columnType: 'json'`)
+
+When a column is configured with `columnType: 'json'`, V-Grid automatically handles structured object/array data:
+- **In-Cell Preview**: Displays a clean, single-line JSON string preview with an expand icon button (`⤢`).
+- **Interactive Popup Modal**: Double-clicking the cell or clicking the expand button (`⤢`) opens an interactive JSON viewer & editor modal dialog.
+- **Modal Capabilities**: Includes JSON Prettifying (2-space formatting), Minifying, Copying to Clipboard, and live JSON syntax validation when editing.
+
+```tsx
+const columnDefs = [
+  {
+    field: 'payload',
+    headerName: 'Event Data (JSON)',
+    columnType: 'json',
+    editable: true,
+    width: 200,
+  },
+]
+```
 
 ---
 

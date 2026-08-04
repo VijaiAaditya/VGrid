@@ -9,14 +9,18 @@ npm install v-grid
 ```
 
 ```tsx
-import { VGrid } from 'v-grid'
-import 'v-grid/styles'
+import { VGrid } from '@openden/v-grid'
+import '@openden/v-grid/styles'
 
 export function App() {
   return (
     <VGrid
-      rowData={[{ id: 1, name: 'Alice' }]}
-      columnDefs={[{ field: 'id' }, { field: 'name' }]}
+      rowData={[{ id: 1, name: 'Alice', meta: { role: 'admin', active: true } }]}
+      columnDefs={[
+        { field: 'id' },
+        { field: 'name' },
+        { field: 'meta', headerName: 'Config (JSON)', columnType: 'json', editable: true }
+      ]}
       rowSelection="multiple"
       checkboxSelection={true}
     />

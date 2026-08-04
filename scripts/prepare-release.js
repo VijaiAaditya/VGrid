@@ -11,7 +11,7 @@ function run(cmd) {
 }
 
 try {
-  const versionType = process.argv[2] || 'patch'
+  const versionType = process.argv[2] || 'minor'
 
   console.log('📦 Step 1: Running type checks...')
   run('npm run type-check')
