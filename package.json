@@ -61,12 +61,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/openden/v-grid.git"
+    "url": "git+https://github.com/VijaiAaditya/VGrid.git"
   },
   "bugs": {
-    "url": "https://github.com/openden/v-grid/issues"
+    "url": "https://github.com/VijaiAaditya/VGrid/issues"
   },
-  "homepage": "https://github.com/openden/v-grid#readme",
+  "homepage": "https://github.com/VijaiAaditya/VGrid#readme",
   "dependencies": {
     "zustand": "^4.5.2"
   },
