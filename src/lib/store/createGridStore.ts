@@ -158,12 +158,11 @@ function computeColumnLayout<T>(flatCols: ColDef<T>[]): InternalColDef<T>[] {
     leftPinnedOffset += col._width
   }
 
-  // Compute normal column offsets (start after pinned left in the scroll area)
-  let normalOffset = 0
+  // Compute normal column left positions
+  let normalLeftOffset = 0
   for (const col of normal) {
-    col._left = normalOffset
-    normalOffset += col._width
-    normalCols.push(col)
+    col._left = normalLeftOffset
+    normalLeftOffset += col._width
   }
 
   // Compute right pinned offsets (RTL from right edge)
@@ -174,7 +173,7 @@ function computeColumnLayout<T>(flatCols: ColDef<T>[]): InternalColDef<T>[] {
     rightPinnedCols.unshift(pinnedRight[i])
   }
 
-  return [...pinnedLeft, ...normalCols, ...rightPinnedCols]
+  return [...pinnedLeft, ...normal, ...rightPinnedCols]
 }
 
 // ─── Sort Engine ──────────────────────────────────────────────────────────────

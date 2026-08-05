@@ -18,6 +18,7 @@ interface RowRendererProps<T> {
   onRowClick: (e: React.MouseEvent) => void
   onToggleExpand: (e: React.MouseEvent) => void
   onCheckboxChange: (checked: boolean) => void
+  onCheckboxDoubleClick?: (e: React.MouseEvent) => void
   showCheckbox: boolean
   isMasterDetail: boolean
   isFullWidth: boolean
@@ -50,9 +51,10 @@ const RowRenderer = memo(<T extends RowData>(props: RowRendererProps<T>) => {
     node, columns, editingCell, activeCell, cellRange,
     onCellClick, onCellDoubleClick, onCellMouseDown, onCellMouseEnter,
     onCommitEdit, onCancelEdit, onRowClick, onToggleExpand, onCheckboxChange,
-    showCheckbox, isMasterDetail, isFullWidth, fullWidthRenderer, detailRenderer,
+    onCheckboxDoubleClick, showCheckbox, isMasterDetail, isFullWidth, fullWidthRenderer, detailRenderer,
     detailHeight, api, style, normalWidth, scrollLeft,
   } = props
+
 
   const rowClass = [
     'vgrid-row',
@@ -165,7 +167,14 @@ const RowRenderer = memo(<T extends RowData>(props: RowRendererProps<T>) => {
       >
         {/* Checkbox */}
         {showCheckbox && (
-          <div className="vgrid-checkbox-cell" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="vgrid-checkbox-cell"
+            onClick={(e) => e.stopPropagation()}
+            onDoubleClick={(e) => {
+              e.stopPropagation()
+              onCheckboxDoubleClick?.(e)
+            }}
+          >
             <input
               type="checkbox"
               className="vgrid-checkbox"
@@ -175,6 +184,7 @@ const RowRenderer = memo(<T extends RowData>(props: RowRendererProps<T>) => {
             />
           </div>
         )}
+
 
         {/* Master-Detail expand icon (first cell area) */}
         {isMasterDetail && (

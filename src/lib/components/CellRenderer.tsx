@@ -3,6 +3,7 @@ import type { InternalColDef } from '../store/createGridStore'
 import type { RowData, RowNode, CellPosition, GridApi, CellClickedEvent, CellDoubleClickedEvent, CellValueChangedEvent } from '../types'
 import { getFieldValue } from '../store/createGridStore'
 import { JsonModal } from './JsonModal'
+import { MediaModal } from './MediaModal'
 
 // ─── Cell Editor Components ───────────────────────────────────────────────────
 
@@ -111,9 +112,14 @@ export const GridCell = memo(<T extends RowData>(props: CellProps<T>) => {
     value = getFieldValue(node.data as RowData, col.field)
   }
 
-  // Check if this column is configured as JSON
+  // Check if this column is configured as JSON, image, html, or video
   const isJsonCol = col.columnType === 'json' || col.cellEditor === 'json'
+  const isImageCol = col.columnType === 'image' || col.cellEditor === 'image'
+  const isHtmlCol = col.columnType === 'html' || col.cellEditor === 'html'
+  const isVideoCol = col.columnType === 'video' || col.cellEditor === 'video'
+
   const [isJsonModalOpen, setIsJsonModalOpen] = useState(false)
+  const [isMediaModalOpen, setIsMediaModalOpen] = useState(false)
 
   // Format for display
   let displayValue: React.ReactNode
@@ -144,6 +150,62 @@ export const GridCell = memo(<T extends RowData>(props: CellProps<T>) => {
         </button>
       </div>
     )
+  } else if (isImageCol) {
+    const srcStr = value == null ? '' : String(value)
+    displayValue = (
+      <div
+        className="vgrid-cell-media"
+        style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}
+        onClick={(e) => {
+          e.stopPropagation()
+          setIsMediaModalOpen(true)
+        }}
+      >
+        {srcStr ? (
+          <img
+            src={srcStr}
+            alt={col.headerName ?? 'Image'}
+            style={{ width: 24, height: 24, objectFit: 'cover', borderRadius: 4, flexShrink: 0 }}
+          />
+        ) : (
+          <span style={{ opacity: 0.5, fontSize: 11 }}>No Image</span>
+        )}
+        <span style={{ fontSize: 12, textDecoration: 'underline', color: 'var(--vg-accent, #4f46e5)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {srcStr ? 'View Image' : ''}
+        </span>
+      </div>
+    )
+  } else if (isHtmlCol) {
+    const htmlStr = value == null ? '' : String(value)
+    displayValue = (
+      <div
+        className="vgrid-cell-media"
+        style={{ cursor: 'pointer', color: 'var(--vg-accent, #4f46e5)', textDecoration: 'underline', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+        onClick={(e) => {
+          e.stopPropagation()
+          setIsMediaModalOpen(true)
+        }}
+      >
+        {htmlStr ? 'Render HTML Popup' : <span style={{ opacity: 0.5 }}>Empty HTML</span>}
+      </div>
+    )
+  } else if (isVideoCol) {
+    const videoStr = value == null ? '' : String(value)
+    displayValue = (
+      <div
+        className="vgrid-cell-media"
+        style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', color: 'var(--vg-accent, #4f46e5)', textDecoration: 'underline' }}
+        onClick={(e) => {
+          e.stopPropagation()
+          setIsMediaModalOpen(true)
+        }}
+      >
+        <span>🎬</span>
+        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {videoStr ? 'Watch Video / Link' : <span style={{ opacity: 0.5 }}>No Video</span>}
+        </span>
+      </div>
+    )
   } else {
     displayValue = value == null ? '' : String(value)
   }
@@ -153,9 +215,11 @@ export const GridCell = memo(<T extends RowData>(props: CellProps<T>) => {
   const handleDoubleClick = useCallback((e: React.MouseEvent) => {
     if (isJsonCol) {
       setIsJsonModalOpen(true)
+    } else if (isImageCol || isHtmlCol || isVideoCol) {
+      setIsMediaModalOpen(true)
     }
     onCellDoubleClick(pos, e)
-  }, [isJsonCol, onCellDoubleClick, pos])
+  }, [isJsonCol, isImageCol, isHtmlCol, isVideoCol, onCellDoubleClick, pos])
 
   // Cell class
   const customClass = typeof col.cellClass === 'function'
@@ -201,6 +265,8 @@ export const GridCell = memo(<T extends RowData>(props: CellProps<T>) => {
     ? col.editable({ value, data: node.data, rowIndex: node.rowIndex })
     : col.editable !== false
 
+  const mediaType: 'image' | 'html' | 'video' = isImageCol ? 'image' : isHtmlCol ? 'html' : 'video'
+
   return (
     <div
       className={cellClass}
@@ -243,8 +309,20 @@ export const GridCell = memo(<T extends RowData>(props: CellProps<T>) => {
           onClose={() => setIsJsonModalOpen(false)}
         />
       )}
+
+      {/* Media Modal Dialog for image, html, video columns */}
+      {(isImageCol || isHtmlCol || isVideoCol) && (
+        <MediaModal
+          isOpen={isMediaModalOpen}
+          title={`${col.headerName ?? col.field ?? 'Media'} (Row #${node.rowIndex + 1})`}
+          src={value == null ? '' : String(value)}
+          type={mediaType}
+          onClose={() => setIsMediaModalOpen(false)}
+        />
+      )}
     </div>
   )
+
 }) as <T extends RowData>(props: CellProps<T>) => React.ReactElement | null
 
 

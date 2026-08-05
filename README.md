@@ -195,13 +195,124 @@ const myContextMenuItems: ContextMenuItem<Employee>[] = [
 | `filter` | `'text' \| 'number' \| 'date' \| 'select' \| 'excel' \| boolean` | Column filter type. `'excel'` activates multi-select checklist popup. |
 | `filterParams` | `{ options?: (string \| number)[] }` | Pre-defined options list for `'select'` or `'excel'` dropdown filters. |
 | `editable` | `boolean \| ((params) => boolean)` | Enables editing on this specific column. |
-| `columnType` | `'string' \| 'number' \| 'date' \| 'boolean' \| 'json'` | Declares column data type. `'json'` renders JSON previews with expand button & popup modal. |
-| `cellEditor` | `'text' \| 'number' \| 'select' \| 'date' \| 'textarea' \| 'json'` | Built-in cell editor type when entering edit mode. |
+| `columnType` | `'string' \| 'number' \| 'date' \| 'boolean' \| 'json' \| 'image' \| 'html' \| 'video'` | Declares column data type. Supports JSON, image, html, and video popups. |
+| `cellEditor` | `'text' \| 'number' \| 'select' \| 'date' \| 'textarea' \| 'json' \| 'image' \| 'html' \| 'video'` | Built-in cell editor type when entering edit mode. |
 | `cellEditorParams` | `{ options?: string[] }` | Option choices passed to `'select'` cell editor. |
 | `cellRenderer` | `(params: CellRendererParams<T>) => ReactNode` | Custom React element renderer for cells in this column. |
 | `headerRenderer` | `(params: HeaderRendererParams<T>) => ReactNode` | Custom React renderer for the column header cell. |
 | `valueGetter` | `(params: ValueGetterParams<T>) => any` | Function to compute dynamic or nested cell values. |
 | `valueFormatter` | `(params: ValueFormatterParams<T>) => string` | Function to format raw values into display text (e.g. currency). |
+
+### Dynamic Multi-Select Column Picker (`ColumnPicker`)
+
+V-Grid provides an interactive multi-select column picker to dynamically choose which columns appear on the grid.
+- **Added at the end**: Toggling a hidden column back on automatically appends it to the end of the active visible columns.
+- **Built-in Header Icon**: Rendered by default in the serial number / checkbox header cell with a sleek play-style column manager icon (`▶`) and hover tooltip (`Choose Columns`).
+
+- **Standalone Component**: Can also be rendered separately anywhere in your toolbar or custom UI.
+- **Callback Event (`onColumnVisibilityChanged`)**: Emits the toggled column ID, visibility status, and full list of current visible columns.
+
+#### Callback Props Comparison: `onColumnToggle` vs `onColumnsChange`
+
+| Callback Prop | Trigger Event | Passed Data | Primary Use Case |
+| :--- | :--- | :--- | :--- |
+| **`onColumnToggle(colId, visible)`** | Fires when **one specific column** is checked or unchecked. | `colId: string`<br/>`visible: boolean` | Tracking single-column visibility toggles or auditing user actions. |
+| **`onColumnsChange(visibleColumns)`** | Fires on **any visibility change** (single toggle, Select All, or Deselect All). | `visibleColumns: ColDef[]` | Saving or syncing the **complete active visible columns layout** to a server API or `localStorage`. |
+
+#### 1. Embedded Header Picker (`columnPicker={true}` or `{ position: ColumnPickerPosition.HEADER }`)
+```tsx
+import { VGrid, ColumnPickerPosition } from '@openden/v-grid'
+
+// Simple boolean (defaults to header position):
+<VGrid
+  rowData={rowData}
+  columnDefs={columnDefs}
+  columnPicker={true} // Enabled in serial/id header cell (default)
+  onColumnVisibilityChanged={(e) => console.log('Visible columns:', e.visibleColumns)}
+/>
+
+// Or object configuration using Enum:
+<VGrid
+  rowData={rowData}
+  columnDefs={columnDefs}
+  columnPicker={{ enabled: true, position: ColumnPickerPosition.HEADER }}
+  onColumnVisibilityChanged={(e) => console.log('Visible columns:', e.visibleColumns)}
+/>
+```
+
+#### 2. Top-Left Corner Toolbar Picker (`columnPicker={{ position: ColumnPickerPosition.TOP_LEFT }}`)
+```tsx
+import { VGrid, ColumnPickerPosition } from '@openden/v-grid'
+
+<VGrid
+  rowData={rowData}
+  columnDefs={columnDefs}
+  columnPicker={{ enabled: true, position: ColumnPickerPosition.TOP_LEFT }} // Rendered in top-left toolbar above grid
+  onColumnVisibilityChanged={(e) => console.log('Visible columns:', e.visibleColumns)}
+/>
+```
+
+
+#### 2. Standalone ColumnPicker Component
+```tsx
+import { ColumnPicker } from '@openden/v-grid'
+
+export function MyToolbar({ columns, handleToggle, handleFullLayoutSave }) {
+  return (
+    <div style={{ display: 'flex', gap: 8 }}>
+      <ColumnPicker
+        columns={columns}
+        // 1. Listen to individual column toggle events:
+        onColumnToggle={(colId, visible) => {
+          console.log(`Single column changed: ${colId} -> ${visible}`)
+          handleToggle(colId, visible)
+        }}
+        // 2. Or receive the complete list of visible columns (e.g. after 'Select All' / 'Deselect All' / Toggle):
+        onColumnsChange={(visibleCols) => {
+          console.log('Save full visible column layout:', visibleCols)
+          handleFullLayoutSave(visibleCols)
+        }}
+        theme="dark"
+      />
+    </div>
+  )
+}
+```
+
+
+---
+
+### Whole-Row Data JSON Popup (`rowClickJsonModal: true`)
+
+By setting `rowClickJsonModal={true}` on `<VGrid />`, users can double-click on the row index number cell (`#` / `id` column) or checkbox selection cell to view the **entire raw row object with all existing fields** (including unpopulated or hidden column data) inside the interactive `JsonModal` popup.
+
+```tsx
+<VGrid
+  rowData={rowData}
+  columnDefs={columnDefs}
+  rowClickJsonModal={true} // Double-click row index cell (#/id) to open complete raw row JSON popup
+/>
+```
+
+
+---
+
+### Media & Content Column Types (`image`, `html`, `video`)
+
+V-Grid provides built-in media previewers with interactive popup modal dialogs:
+
+1. **`columnType: 'image'`**: Displays an in-cell image thumbnail & "View Image" trigger. Clicking or double-clicking pops up the full-resolution image dialog.
+2. **`columnType: 'html'`**: Displays an in-cell "Render HTML Popup" link. Clicking renders the raw HTML content in a sanitized modal container.
+3. **`columnType: 'video'`**: Displays an in-cell video link/icon (`🎬 Watch Video`). Clicking opens a video player popup modal with direct playback controls and a clickable video URL link.
+
+```tsx
+const columnDefs = [
+  { field: 'avatarUrl', headerName: 'Avatar', columnType: 'image', width: 140 },
+  { field: 'bioHtml', headerName: 'Biography', columnType: 'html', width: 160 },
+  { field: 'demoVideo', headerName: 'Video Link', columnType: 'video', width: 160 },
+  { field: 'config', headerName: 'Row Metadata', columnType: 'json', width: 180 },
+]
+```
 
 ---
 
@@ -223,6 +334,7 @@ const columnDefs = [
   },
 ]
 ```
+
 
 ---
 

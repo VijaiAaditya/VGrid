@@ -8,6 +8,9 @@ export { FilterBuilder } from './components/FilterBuilder'
 export { RowGroupPanel } from './components/RowGroupPanel'
 export { PopupEditor } from './components/PopupEditor'
 export { JsonModal } from './components/JsonModal'
+export { MediaModal } from './components/MediaModal'
+export { ColumnPicker } from './components/ColumnPicker'
+
 
 // Phase 3 components
 export { ContextMenu, DEFAULT_CONTEXT_MENU_ITEMS } from './components/ContextMenu'
@@ -27,8 +30,12 @@ export {
   copySelectedRowsToClipboard,
 } from './features/exportAndClipboard'
 
+export { ColumnPickerPosition } from './types'
+export type { ColumnPickerPositionType } from './types'
+
 // ─── Core Types ───────────────────────────────────────────────────────────────
 export type {
+
   GridOptions,
   ColDef,
   RowData,
@@ -103,7 +110,9 @@ export type {
   RowGroupOpenedEvent,
   RowGroupChangedEvent,
   ColumnMovedEvent,
+  ColumnVisibilityChangedEvent,
 } from './types'
+
 
 // ─── Phase 3 Types ────────────────────────────────────────────────────────────
 export type {

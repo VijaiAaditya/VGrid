@@ -53,6 +53,9 @@ export interface Employee {
   isActive: boolean
   status: string
   projects: number
+  avatarUrl?: string
+  bioHtml?: string
+  demoVideo?: string
   metadata?: Record<string, any>
   _highlight?: boolean
 }
@@ -94,6 +97,9 @@ export function generateEmployees(count: number): Employee[] {
       isActive: status === 'Active',
       status,
       projects,
+      avatarUrl: `https://picsum.photos/seed/${i + 100}/300/300`,
+      bioHtml: `<div style="font-family: sans-serif;"><h3>${firstName} ${lastName}</h3><p style="color: #6366f1;"><b>${role}</b> in <i>${department}</i></p><hr/><p>Bio note: Experienced professional with <b>${yearsExperience} years</b> in software delivery. Based in ${city}, ${country}.</p><ul><li>Projects completed: ${projects}</li><li>Performance Rating: ${performanceScore}/5.0</li></ul></div>`,
+      demoVideo: `https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4`,
       metadata: {
         permissions: role.includes('Lead') || role.includes('Manager') ? ['read', 'write', 'admin'] : ['read'],
         settings: { theme: i % 2 === 0 ? 'dark' : 'light', notifications: true },
@@ -104,3 +110,4 @@ export function generateEmployees(count: number): Employee[] {
   }
   return rows
 }
+

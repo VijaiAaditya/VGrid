@@ -76,9 +76,9 @@ export interface CellClassParams<T = RowData> {
  * Drives default filter, editor, and formatter when not explicitly set.
  * Defaults to 'string' if omitted.
  */
-export type ColumnType = 'string' | 'number' | 'date' | 'boolean' | 'json'
+export type ColumnType = 'string' | 'number' | 'date' | 'boolean' | 'json' | 'image' | 'html' | 'video'
 
-export type CellEditorType = 'text' | 'number' | 'select' | 'date' | 'textarea' | 'json'
+export type CellEditorType = 'text' | 'number' | 'select' | 'date' | 'textarea' | 'json' | 'image' | 'html' | 'video'
 
 
 export interface CellEditorParams {
@@ -438,6 +438,18 @@ export interface ColumnMovedEvent {
   columnOrder: string[]
 }
 
+export interface ColumnVisibilityChangedEvent<T = RowData> {
+  /** The column ID that was toggled */
+  colId: string
+  /** Whether the column is visible */
+  visible: boolean
+  /** List of currently visible column definitions in order */
+  visibleColumns: ColDef<T>[]
+  /** List of all column IDs currently visible in order */
+  visibleColumnIds: string[]
+}
+
+
 export interface DetailCellRendererParams<T = RowData> {
   data: T
   rowIndex: number
@@ -446,7 +458,24 @@ export interface DetailCellRendererParams<T = RowData> {
 
 // ─── Grid Options ─────────────────────────────────────────────────────────────
 
+export enum ColumnPickerPosition {
+  HEADER = 'header',
+  TOP_LEFT = 'topLeft',
+}
+
+export type ColumnPickerPositionType = ColumnPickerPosition | 'header' | 'topLeft'
+
+export interface ColumnPickerOptions {
+  /** Enable column picker. Default: true */
+  enabled?: boolean
+  /** Position of column picker: ColumnPickerPosition.HEADER or ColumnPickerPosition.TOP_LEFT. Default: ColumnPickerPosition.HEADER */
+  position?: ColumnPickerPositionType
+}
+
+export type ColumnPickerConfig = boolean | ColumnPickerOptions
+
 export interface GridOptions<T = RowData> {
+
   // ── Data ──────────────────────────────────────────────────────────────────
   rowData: T[]
   columnDefs: ColDef<T>[]
@@ -478,6 +507,17 @@ export interface GridOptions<T = RowData> {
   suppressRowClickSelection?: boolean
   /** Show checkbox column automatically */
   checkboxSelection?: boolean
+  /** Show whole row data in JSON modal on double-clicking index column cell or checkbox/index cell */
+  rowClickJsonModal?: boolean
+  /** Column picker configuration: boolean (`true`/`false`) or object `{ enabled?: boolean, position?: ColumnPickerPosition }`. Default: true */
+  columnPicker?: ColumnPickerConfig
+
+
+
+
+
+
+
 
   // ── Editing ───────────────────────────────────────────────────────────────
   editable?: boolean
@@ -543,6 +583,9 @@ export interface GridOptions<T = RowData> {
   onColumnResized?: (event: ColumnResizedEvent) => void
   /** Fired when user drags a column header to a new position */
   onColumnMoved?: (event: ColumnMovedEvent) => void
+  /** Fired when column visibility is toggled */
+  onColumnVisibilityChanged?: (event: ColumnVisibilityChangedEvent<T>) => void
+
 
   // ── Phase 2: Row Grouping ─────────────────────────────────────────────────
   /** Columns to group rows by (applied in order) */
@@ -611,7 +654,7 @@ export interface GridOptions<T = RowData> {
 
   // ── Phase 3: Column Visibility Panel ────────────────────────────────────
   showColumnPanel?: boolean
-  onColumnVisibilityChanged?: (event: ColumnVisibilityChangedEvent) => void
+
 
   // ── Phase 3: Context Menu ────────────────────────────────────────────────
   enableContextMenu?: boolean

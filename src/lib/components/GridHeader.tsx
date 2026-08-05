@@ -2,6 +2,8 @@ import React, { memo, useCallback, useMemo, useState, useRef, useEffect } from '
 import type { InternalColDef } from '../store/createGridStore'
 import type { ColDef, RowData, SortModel, GridApi, FloatingFilterOperator } from '../types'
 import { useColumnResize } from '../hooks/useColumnResize'
+import { ColumnPicker } from './ColumnPicker'
+
 
 
 // ─── Sort Icon ────────────────────────────────────────────────────────────────
@@ -43,14 +45,23 @@ interface HeaderCellProps<T> {
   onMoveColumn?: (fromColId: string, toColId: string) => void
   api: GridApi<T>
   isCheckbox?: boolean
+  showColumnPicker?: boolean
+  onColumnToggle?: (colId: string, visible: boolean) => void
+  onColumnsChange?: (visibleCols: InternalColDef<T>[]) => void
+  allColumns?: InternalColDef<T>[]
   onSelectAll?: (checked: boolean) => void
   allSelected?: boolean
   someSelected?: boolean
   style?: React.CSSProperties
 }
 
+
 const HeaderCell = memo(<T extends RowData>(props: HeaderCellProps<T>) => {
-  const { col, sortModel, onSort, onResize, onMoveColumn, api, isCheckbox, onSelectAll, allSelected, someSelected, style } = props
+  const {
+    col, sortModel, onSort, onResize, onMoveColumn, api, isCheckbox,
+    showColumnPicker, onColumnToggle, onColumnsChange, allColumns,
+    onSelectAll, allSelected, someSelected, style
+  } = props
 
   const sortEntry = sortModel.find((s) => s.colId === col._colId)
   const sortDirection = sortEntry?.sort ?? null
@@ -114,7 +125,7 @@ const HeaderCell = memo(<T extends RowData>(props: HeaderCellProps<T>) => {
   // Checkbox column header
   if (isCheckbox) {
     return (
-      <div className="vgrid-checkbox-cell vgrid-header-cell" style={{ width: 40, minWidth: 40, maxWidth: 40 }}>
+      <div className="vgrid-checkbox-cell vgrid-header-cell" style={{ width: 40, minWidth: 40, maxWidth: 40, gap: 2 }}>
         {col.headerCheckboxSelection && (
           <input
             type="checkbox"
@@ -130,6 +141,9 @@ const HeaderCell = memo(<T extends RowData>(props: HeaderCellProps<T>) => {
       </div>
     )
   }
+
+
+
 
   const classes = [
     'vgrid-header-cell',
@@ -156,11 +170,24 @@ const HeaderCell = memo(<T extends RowData>(props: HeaderCellProps<T>) => {
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      {col.headerRenderer
-        ? col.headerRenderer({ colDef: col, displayName, api })
-        : <span className="vgrid-header-cell__label">{displayName}</span>
-      }
+      {showColumnPicker && onColumnToggle && allColumns ? (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4, width: '100%', justifyContent: 'center' }}>
+          <ColumnPicker
+            columns={allColumns}
+            onColumnToggle={onColumnToggle}
+            onColumnsChange={onColumnsChange}
+            placement="header"
+          />
+        </div>
+      ) : col.headerRenderer ? (
+        col.headerRenderer({ colDef: col, displayName, api })
+      ) : (
+        <span className="vgrid-header-cell__label">{displayName}</span>
+      )}
+
+
       {col.sortable && <SortIcon direction={sortDirection} />}
+
       {sortIndex >= 0 && <span className="vgrid-sort-index">{sortIndex + 1}</span>}
       {col.resizable !== false && (
         <div
@@ -658,6 +685,10 @@ interface GridHeaderProps<T> {
   onFilterChange: (colId: string, value: string) => void
   onFilterOperatorChange: (colId: string, op: FloatingFilterOperator) => void
   showCheckbox: boolean
+  showColumnPicker?: boolean
+  onColumnToggle?: (colId: string, visible: boolean) => void
+  onColumnsChange?: (visibleCols: InternalColDef<T>[]) => void
+  allColumns?: InternalColDef<T>[]
   allSelected: boolean
   someSelected: boolean
   onSelectAll: (checked: boolean) => void
@@ -672,7 +703,8 @@ export const GridHeader = memo(<T extends RowData>(props: GridHeaderProps<T>) =>
     columns, columnDefs, hasGroupedHeaders, sortModel, onSort, onResize, onMoveColumn,
     scrollLeft, showFloatingFilter, filterValues, filterOperators,
     onFilterChange, onFilterOperatorChange,
-    showCheckbox, allSelected, someSelected, onSelectAll, api, headerHeight, uniqueValues,
+    showCheckbox, showColumnPicker, onColumnToggle, onColumnsChange, allColumns,
+    allSelected, someSelected, onSelectAll, api, headerHeight, uniqueValues,
   } = props
 
   const pinnedLeft = columns.filter((c) => c.pinned === 'left' && !c.hide)
@@ -685,17 +717,26 @@ export const GridHeader = memo(<T extends RowData>(props: GridHeaderProps<T>) =>
 
   const checkboxWidth = showCheckbox ? 40 : 0
 
-  const renderHeaderCell = (col: InternalColDef<T>) => (
-    <HeaderCell
-      key={col._colId}
-      col={col}
-      sortModel={sortModel}
-      onSort={onSort}
-      onResize={onResize}
-      onMoveColumn={onMoveColumn}
-      api={api}
-    />
-  )
+  const renderHeaderCell = (col: InternalColDef<T>, idx: number) => {
+    const isSerialCol = col.field === 'id' || col._colId === 'id' || col.colId === 'id' || idx === 0
+    return (
+      <HeaderCell
+        key={col._colId}
+        col={col}
+        sortModel={sortModel}
+        onSort={onSort}
+        onResize={onResize}
+        onMoveColumn={onMoveColumn}
+        api={api}
+        showColumnPicker={showColumnPicker && isSerialCol}
+        onColumnToggle={onColumnToggle}
+        onColumnsChange={onColumnsChange}
+        allColumns={allColumns}
+      />
+    )
+  }
+
+
 
   return (
     <div className="vgrid-header-wrapper" role="rowgroup" aria-label="Column headers">
@@ -722,16 +763,21 @@ export const GridHeader = memo(<T extends RowData>(props: GridHeaderProps<T>) =>
               onResize={() => {}}
               api={api}
               isCheckbox
+              showColumnPicker={showColumnPicker}
+              onColumnToggle={onColumnToggle}
+              onColumnsChange={onColumnsChange}
+              allColumns={allColumns}
               onSelectAll={onSelectAll}
               allSelected={allSelected}
               someSelected={someSelected}
             />
           )}
 
+
           {/* Pinned left — always visible */}
           {pinnedLeft.length > 0 && (
             <div className="vgrid-pinned-left" style={{ display: 'flex', zIndex: 'var(--vg-z-pinned)' as any }}>
-              {pinnedLeft.map(renderHeaderCell)}
+              {pinnedLeft.map((col, i) => renderHeaderCell(col, i))}
             </div>
           )}
 
@@ -745,9 +791,10 @@ export const GridHeader = memo(<T extends RowData>(props: GridHeaderProps<T>) =>
                 willChange: 'transform',
               }}
             >
-              {normal.map(renderHeaderCell)}
+              {normal.map((col, i) => renderHeaderCell(col, pinnedLeft.length + i))}
             </div>
           </div>
+
 
           {/* Pinned right — always visible */}
           {pinnedRight.length > 0 && (

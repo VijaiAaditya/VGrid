@@ -1,6 +1,8 @@
 import React, { useState, useCallback, useRef, useMemo } from 'react'
 import { VGrid } from '../lib/components/VGrid'
+import { ColumnPicker } from '../lib/components/ColumnPicker'
 import { Sparkline, createSparklineCellRenderer } from '../lib/components/Sparkline'
+
 import type {
   ColDef, GridApi, GridReadyEvent, CellRendererParams,
   DetailCellRendererParams, IServerSideDatasource, IInfiniteDatasource,
@@ -218,9 +220,10 @@ export default function App() {
     return [
       {
         field: 'id', headerName: '#', width: 65, pinned: 'left',
-        sortable: true, resizable: false, filter: false,
+        sortable: true, resizable: false, filter: false, editable: false,
         cellStyle: { color: 'var(--vg-text-muted)', fontSize: 11 },
       },
+
       {
         headerName: 'Personal Info', groupId: 'personal',
         children: [
@@ -291,6 +294,18 @@ export default function App() {
         columnType: 'json', editable: true, sortable: false, filter: false,
       },
       {
+        field: 'avatarUrl', headerName: 'Avatar (Image)', width: 140,
+        columnType: 'image', sortable: false, filter: false,
+      },
+      {
+        field: 'bioHtml', headerName: 'Bio (HTML)', width: 150,
+        columnType: 'html', sortable: false, filter: false,
+      },
+      {
+        field: 'demoVideo', headerName: 'Demo (Video)', width: 150,
+        columnType: 'video', sortable: false, filter: false,
+      },
+      {
         field: 'status', headerName: 'Status', width: 120, pinned: 'right',
         sortable: true, filter: 'select', editable: true,
         cellEditor: 'select',
@@ -300,6 +315,7 @@ export default function App() {
       },
     ]
   }, [mode])
+
 
   const defaultColDef = useMemo<Partial<ColDef<Employee>>>(() => ({
     resizable: true, sortable: true, filter: true, minWidth: 60,
@@ -495,7 +511,9 @@ export default function App() {
           pinnedBottomRowData={pinnedBottomRowData}
 
           // Feature toggles
+          rowClickJsonModal={true}
           floatingFilter={floatingFilter}
+
           enableGlobalSearch={globalSearch}
           checkboxSelection={showCheckbox}
           rowSelection="multiple"
@@ -579,6 +597,11 @@ export default function App() {
             if (mode === 'callbacks') alert(`Event: onColumnMoved | From: ${e.colId} -> To: ${e.toColId}`)
             console.log('[VGrid Callback] onColumnMoved:', e)
           }}
+          onColumnVisibilityChanged={(e) => {
+            if (mode === 'callbacks') alert(`Event: onColumnVisibilityChanged | Col: ${e.colId}, Visible: ${e.visible}, Total Visible: ${e.visibleColumnIds.length}`)
+            console.log('[VGrid Callback] onColumnVisibilityChanged:', e)
+          }}
+
           onRowClicked={(e) => {
             if (mode === 'callbacks') //alert(`Event: onRowClicked | Row Index: ${e.rowIndex}`)
               console.log('[VGrid Callback] onRowClicked:', e)

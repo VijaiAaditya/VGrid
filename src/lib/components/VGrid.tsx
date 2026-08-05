@@ -8,7 +8,8 @@ import type {
   XlsxExportParams, IServerSideDatasource, IInfiniteDatasource,
   FloatingFilterOperator, ContextMenuActionParams, CopiedSelectionData,
 } from '../types'
-import { createGridStore, getFieldValue } from '../store/createGridStore'
+import { createGridStore, getFieldValue, type InternalColDef } from '../store/createGridStore'
+
 import { useVirtualizer } from '../hooks/useVirtualizer'
 import { useRangeSelection } from '../hooks/useRangeSelection'
 import { useDragFill } from '../hooks/useDragFill'
@@ -18,7 +19,9 @@ import PinnedRows from './PinnedRows'
 import GroupRow from './GroupRow'
 import { RowGroupPanel } from './RowGroupPanel'
 import { FilterBuilder } from './FilterBuilder'
+import { ColumnPicker } from './ColumnPicker'
 import { Sparkline } from './Sparkline'
+
 import {
   exportDataAsCsv,
   copyRangeToClipboard,
@@ -29,6 +32,7 @@ import {
 } from '../features/exportAndClipboard'
 import { ContextMenu, DEFAULT_CONTEXT_MENU_ITEMS } from './ContextMenu'
 import { PaginationPanel } from './PaginationPanel'
+import { JsonModal } from './JsonModal'
 import {
   buildGroupTree,
   flattenGroupTree,
@@ -111,7 +115,11 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
     enableRangeSelection = false,
     suppressRowClickSelection = false,
     checkboxSelection = false,
+    rowClickJsonModal = false,
+    columnPicker = true,
     editable = false,
+
+
     singleClickEdit = false,
     enableClipboard = true,
     copySelectedRowsToClipboard: copySelectedRows = false,
@@ -177,7 +185,9 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
     onFilterChanged,
     onColumnResized,
     onColumnMoved,
+    onColumnVisibilityChanged,
     onRowGroupOpened,
+
     onRowGroupChanged,
     onUndoStarted,
     onRedoStarted,
@@ -219,6 +229,11 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
   const [filterGroupModel, setFilterGroupModel] = useState<FilterGroupModel | null>(null)
   const [undoToast, setUndoToast] = useState<string | null>(null)
 
+  // Resolve columnPicker config (boolean or object)
+  const columnPickerEnabled = typeof columnPicker === 'boolean' ? columnPicker : (columnPicker.enabled ?? true)
+  const columnPickerPos = typeof columnPicker === 'object' && columnPicker.position ? columnPicker.position : 'header'
+
+
   // ── Phase 3 local state ───────────────────────────────────────────────────
   const [filterOperators, setFilterOperators] = useState<Record<string, FloatingFilterOperator>>({})
   const [contextMenuState, setContextMenuState] = useState<{
@@ -228,6 +243,7 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
   } | null>(null)
   const [page, setPage] = useState(0)
   const [pageSize, setPageSizeState] = useState(initialPageSize)
+  const [rowJsonModalData, setRowJsonModalData] = useState<{ title: string; value: unknown } | null>(null)
 
   // ── Undo stack ────────────────────────────────────────────────────────────
   const undoStackRef = useRef(new UndoStack(undoRedoCellEditingLimit))
@@ -456,6 +472,59 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
     onColumnMoved?.({ colId: fromColId, toColId, columnOrder: newOrder })
   }, [onColumnMoved])
 
+  const handleColumnToggle = useCallback((colId: string, visible: boolean) => {
+    const currentCols = useStore.getState().columns
+    const targetIdx = currentCols.findIndex((c) => c._colId === colId)
+    if (targetIdx === -1) return
+
+    let updatedCols = [...currentCols]
+    const targetCol = { ...updatedCols[targetIdx], hide: !visible }
+
+    if (visible) {
+      // Move toggled-on column to the end of array so it appears as last column
+      updatedCols.splice(targetIdx, 1)
+      updatedCols.push(targetCol)
+    } else {
+      updatedCols[targetIdx] = targetCol
+    }
+
+    // Recompute column offsets (_left, _pinnedLeft, etc)
+    let leftPinnedOffset = 0
+    let normalLeftOffset = 0
+    let rightOffset = 0
+
+    const pinnedLeft = updatedCols.filter((c) => !c.hide && c.pinned === 'left')
+    const normal = updatedCols.filter((c) => !c.hide && !c.pinned)
+    const pinnedRight = updatedCols.filter((c) => !c.hide && c.pinned === 'right')
+
+    pinnedLeft.forEach((c) => {
+      c._pinnedLeft = leftPinnedOffset
+      leftPinnedOffset += c._width
+    })
+    normal.forEach((c) => {
+      c._left = normalLeftOffset
+      normalLeftOffset += c._width
+    })
+    for (let i = pinnedRight.length - 1; i >= 0; i--) {
+      pinnedRight[i]._pinnedRight = rightOffset
+      rightOffset += pinnedRight[i]._width
+    }
+
+    useStore.setState({ columns: updatedCols })
+
+    if (onColumnVisibilityChanged) {
+      const visibleCols = updatedCols.filter((c) => !c.hide)
+      onColumnVisibilityChanged({
+        colId,
+        visible,
+        visibleColumns: visibleCols as ColDef<T>[],
+        visibleColumnIds: visibleCols.map((c) => c._colId),
+      })
+    }
+  }, [onColumnVisibilityChanged])
+
+
+
   const handleFilterChange = useCallback((colId: string, value: string) => {
     setFilterValues((prev) => {
       const next = { ...prev, [colId]: value }
@@ -635,13 +704,26 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
     else if (col.field) value = getFieldValue(node.data as RowData, col.field)
     onCellDoubleClicked?.({ data: node.data, colDef: col, value, rowIndex: pos.rowIndex, event: e.nativeEvent })
 
+    const isIndexCol = col.field === 'id' || col._colId === 'id' || col.colId === 'id' || pos.colId === columns[0]?._colId
+
+    // If rowClickJsonModal is enabled and double clicked on index/id column or first column
+    if (rowClickJsonModal && isIndexCol) {
+      setRowJsonModalData({
+        title: `Row Data #${node.rowIndex + 1} (${getRowId ? getRowId(node.data) : node.id})`,
+        value: node.data,
+      })
+      return
+    }
+
     const isEditable = typeof col.editable === 'function'
       ? col.editable({ value, data: node.data, rowIndex: node.rowIndex })
       : (col.editable ?? editable)
-    if (!singleClickEdit && !col.singleClickEdit && isEditable) {
+    if (!singleClickEdit && !col.singleClickEdit && isEditable && !isIndexCol) {
       useStore.getState().startEditing(pos)
     }
-  }, [columns, displayedRows, editable, singleClickEdit, onCellDoubleClicked])
+
+  }, [columns, displayedRows, editable, singleClickEdit, rowClickJsonModal, getRowId, onCellDoubleClicked])
+
 
   const handleCommitEdit = useCallback((colId: string, rowIndex: number, newValue: unknown) => {
     const col = columns.find((c) => c._colId === colId)
@@ -1038,8 +1120,32 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
       onMouseUp={rangeMouseUp}
       onContextMenu={enableContextMenu ? handleContextMenu : undefined}
     >
+      {/* Top Left Standalone Column Picker */}
+      {columnPickerEnabled && columnPickerPos === 'topLeft' && (
+        <div style={{ padding: '6px 12px', background: 'var(--vg-bg-header)', borderBottom: 'var(--vg-border-width) var(--vg-border-style) var(--vg-border-color)', display: 'flex', alignItems: 'center' }}>
+          <ColumnPicker
+            columns={columns}
+            onColumnToggle={handleColumnToggle}
+            onColumnsChange={(visCols: InternalColDef<T>[]) => {
+              onColumnVisibilityChanged?.({
+                colId: '',
+                visible: true,
+                visibleColumns: visCols as ColDef<T>[],
+                visibleColumnIds: visCols.map((c) => c._colId),
+              })
+            }}
+            theme={theme}
+            placement="standalone"
+          />
+        </div>
+      )}
+
+
+
+
       {/* Global Search */}
       {enableGlobalSearch && (
+
         <GlobalSearch
           value={quickFilter}
           onChange={(v) => {
@@ -1094,7 +1200,21 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
         onFilterChange={handleFilterChange}
         onFilterOperatorChange={handleFilterOperatorChange}
         showCheckbox={showCheckbox || showMasterCol}
+        showColumnPicker={columnPickerEnabled && columnPickerPos === 'header'}
+        onColumnToggle={handleColumnToggle}
+
+
+        onColumnsChange={(visCols) => {
+          onColumnVisibilityChanged?.({
+            colId: '',
+            visible: true,
+            visibleColumns: visCols as ColDef<T>[],
+            visibleColumnIds: visCols.map((c) => c._colId),
+          })
+        }}
+        allColumns={columns}
         allSelected={allSelected}
+
         someSelected={someSelected}
         onSelectAll={handleSelectAll}
         api={api}
@@ -1187,7 +1307,16 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
                 onRowClick={(e) => handleRowClick(node, e)}
                 onToggleExpand={(e) => handleToggleExpand(node, e)}
                 onCheckboxChange={(checked) => handleCheckboxChange(node, checked)}
+                onCheckboxDoubleClick={() => {
+                  if (rowClickJsonModal) {
+                    setRowJsonModalData({
+                      title: `Row Data #${node.rowIndex + 1} (${getRowId ? getRowId(node.data) : node.id})`,
+                      value: node.data,
+                    })
+                  }
+                }}
                 showCheckbox={showCheckbox}
+
                 isMasterDetail={isMaster}
                 isFullWidth={isFullWidth}
                 fullWidthRenderer={fullWidthCellRenderer}
@@ -1284,9 +1413,21 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
           onExportSelectionJson={(data) => exportSelectionAsJson(data)}
         />
       )}
+
+      {/* Row Data JSON Modal (Double click index / checkbox cell) */}
+      {rowJsonModalData && (
+        <JsonModal
+          isOpen={!!rowJsonModalData}
+          title={rowJsonModalData.title}
+          value={rowJsonModalData.value}
+          readOnly={true}
+          onClose={() => setRowJsonModalData(null)}
+        />
+      )}
     </div>
   )
 }
+
 
 
 // ─── Helper: find group by id in flat items ───────────────────────────────────
