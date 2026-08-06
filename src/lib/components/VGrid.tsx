@@ -34,6 +34,7 @@ import {
 import { ContextMenu, DEFAULT_CONTEXT_MENU_ITEMS } from './ContextMenu'
 import { PaginationPanel } from './PaginationPanel'
 import { JsonModal } from './JsonModal'
+import { ExportXlsxModal } from './ExportXlsxModal'
 import {
   buildGroupTree,
   flattenGroupTree,
@@ -250,6 +251,10 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
   const paginationEnabled = pagination != null
   const paginationPageSizeOptions = pagination?.pageSizeOptions ?? [10, 25, 50, 100]
   const [rowJsonModalData, setRowJsonModalData] = useState<{ title: string; value: unknown } | null>(null)
+  const [xlsxExportState, setXlsxExportState] = useState<{
+    params: XlsxExportParams
+    runExport: (finalParams: XlsxExportParams) => void
+  } | null>(null)
 
   // ── Undo stack ────────────────────────────────────────────────────────────
   const undoStackRef = useRef(new UndoStack(undoRedoCellEditingLimit))
@@ -933,31 +938,40 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
     ),
     exportDataAsXlsx: (params) => {
       const exportParams = { ...excelExportParams, ...params }
-      const nodes = exportParams.exportMode === 'all'
-        ? useStore.getState().getUnfilteredRowNodes(getRowId)
-        : useStore.getState().displayedRowNodes
 
-      let exportFlatItems: FlatItem<T>[]
-      if (treeData && getDataPath) {
-        exportFlatItems = buildTreeFromData(nodes, getDataPath, treeExpandedIds, autoExpandAll)
-      } else if (groupByColIds.length > 0) {
-        const tree = buildGroupTree(nodes, groupByColIds, columnsWithAgg, expandedGroupIds)
-        exportFlatItems = flattenGroupTree(tree)
-      } else {
-        exportFlatItems = wrapRowNodesAsFlatItems(nodes)
+      const runExport = (finalParams: XlsxExportParams) => {
+        const nodes = finalParams.exportMode === 'all'
+          ? useStore.getState().getUnfilteredRowNodes(getRowId)
+          : useStore.getState().displayedRowNodes
+
+        let exportFlatItems: FlatItem<T>[]
+        if (treeData && getDataPath) {
+          exportFlatItems = buildTreeFromData(nodes, getDataPath, treeExpandedIds, autoExpandAll)
+        } else if (groupByColIds.length > 0) {
+          const tree = buildGroupTree(nodes, groupByColIds, columnsWithAgg, expandedGroupIds)
+          exportFlatItems = flattenGroupTree(tree)
+        } else {
+          exportFlatItems = wrapRowNodesAsFlatItems(nodes)
+        }
+
+        import('../features/xlsxExporter')
+          .then(({ exportDataAsXlsx: doExport }) => {
+            doExport(
+              exportFlatItems,
+              useStore.getState().columns,
+              finalParams
+            )
+          })
+          .catch((err) => {
+            console.error('[V_Grid] Failed to load exportDataAsXlsx dynamically', err)
+          })
       }
 
-      import('../features/xlsxExporter')
-        .then(({ exportDataAsXlsx }) => {
-          exportDataAsXlsx(
-            exportFlatItems,
-            useStore.getState().columns,
-            exportParams
-          )
-        })
-        .catch((err) => {
-          console.error('[V_Grid] Failed to load exportDataAsXlsx dynamically', err)
-        })
+      if (exportParams.exportMode) {
+        runExport(exportParams)
+      } else {
+        setXlsxExportState({ params: exportParams, runExport })
+      }
     },
     setFilterModel: (model) => {
       useStore.getState().setFilterModel(model)
@@ -1453,6 +1467,25 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
           value={rowJsonModalData.value}
           readOnly={true}
           onClose={() => setRowJsonModalData(null)}
+        />
+      )}
+
+      {xlsxExportState && (
+        <ExportXlsxModal
+          isOpen={!!xlsxExportState}
+          theme={theme === 'custom' ? 'dark' : theme}
+          filteredCount={displayedRows.length}
+          totalCount={useStore.getState().rowData?.length ?? 0}
+          defaultFileName={xlsxExportState.params.fileName}
+          onConfirm={(mode, finalFileName) => {
+            xlsxExportState.runExport({
+              ...xlsxExportState.params,
+              exportMode: mode,
+              fileName: finalFileName
+            })
+            setXlsxExportState(null)
+          }}
+          onClose={() => setXlsxExportState(null)}
         />
       )}
     </div>
