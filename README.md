@@ -199,6 +199,13 @@ Use the `onPaginationChanged` callback to react to page changes:
 | `serverSideDatasource` | `IServerSideDatasource` | `undefined` | Enterprise Server-Side Row Model (SSRM) data provider. |
 | `infiniteDatasource` | `IInfiniteDatasource` | `undefined` | Infinite scroll data provider. |
 
+### Excel Export Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `excelStyles` | `ExcelStyleDef[]` | `undefined` | Custom styling configurations for Excel cell formatting. |
+| `excelExportParams` | `XlsxExportParams` | `undefined` | Default configuration settings for the Excel export action. |
+
 ---
 
 ## Column Definition Reference (`ColDef`)
@@ -425,6 +432,16 @@ import { exportDataAsXlsx } from 'v-grid/excel'
 exportDataAsXlsx(flatItems, columns, {
   fileName: 'employees.xlsx',
   sheetName: 'Data',
+  exportMode: 'filtered', // 'filtered' (default) exports active rows, 'all' exports all original rows
+})
+```
+
+You can also trigger exports using the Grid API on the ref:
+```tsx
+// Using the grid ref API
+apiRef.current?.exportDataAsXlsx({
+  fileName: 'grid-export.xlsx',
+  exportMode: 'all', // export all rows unfiltered
 })
 ```
 
