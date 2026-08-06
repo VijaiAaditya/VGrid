@@ -467,7 +467,7 @@ export default function App() {
             CSV ↓
           </button>
 
-          <button onClick={() => alert('XLSX Export is available as a subpath module: import { exportDataAsXlsx } from "v-grid/excel"')} style={{
+          <button onClick={() => apiRef.current?.exportDataAsXlsx({ fileName: 'vgrid.xlsx' })} style={{
             padding: '4px 12px', borderRadius: 6, background: accent, border: 'none',
             color: '#fff', cursor: 'pointer', fontSize: 11, fontWeight: 600,
           }}>

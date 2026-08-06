@@ -930,8 +930,18 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
       params,
       api
     ),
-    exportDataAsXlsx: () => {
-      console.warn('[V_Grid] exportDataAsXlsx has been decoupled for lighter bundle size. Please import { exportDataAsXlsx } from "v-grid/excel"')
+    exportDataAsXlsx: (params) => {
+      import('../features/xlsxExporter')
+        .then(({ exportDataAsXlsx }) => {
+          exportDataAsXlsx(
+            flatItems,
+            useStore.getState().columns,
+            params
+          )
+        })
+        .catch((err) => {
+          console.error('[V_Grid] Failed to load exportDataAsXlsx dynamically', err)
+        })
     },
     setFilterModel: (model) => {
       useStore.getState().setFilterModel(model)
