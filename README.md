@@ -61,17 +61,19 @@ export function App() {
 ## Component Configuration Props (`<VGrid />`)
 
 ### Core & Layout Props
+
 | Prop | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `rowData` | `T[]` | `[]` | Array of row data objects to display in the grid. |
-| `columnDefs` | `ColDef<T>[]` | `[]` | Array of column definitions describing headers, fields, and behavior. |
-| `defaultColDef` | `Partial<ColDef<T>>` | `{}` | Default settings merged into every column definition. |
+| `rowData` | `any[]` | `[]` | Array of row data objects to display in the grid. |
+| `columnDefs` | `ColDef[]` | `[]` | Array of column definitions describing headers, fields, and behavior. |
+| `defaultColDef` | `Partial<ColDef>` | `{}` | Default settings merged into every column definition. |
 | `theme` | `'dark' \| 'light' \| 'custom'` | `'dark'` | Visual theme for the grid. |
 | `rowHeight` | `number` | `36` | Height of rows in pixels. |
 | `headerHeight` | `number` | `38` | Height of column headers in pixels. |
-| `getRowId` | `(data: T) => string` | `data.id` | Callback returning a unique identifier string for each row. |
+| `getRowId` | `(data: any) => string` | `data.id` | Callback returning a unique identifier string for each row. |
 
 ### Selection Props
+
 | Prop | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `rowSelection` | `'multiple' \| 'single'` | `'multiple'` | Enable single or multi-row selection. |
@@ -83,6 +85,7 @@ export function App() {
 | `fillHandleDirection` | `'x' \| 'y' \| 'xy'` | `'y'` | Allowed direction for drag-filling cell values. |
 
 ### Filtering & Search Props
+
 | Prop | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `floatingFilter` | `boolean` | `false` | Displays input filter cells under each column header. |
@@ -91,6 +94,7 @@ export function App() {
 | `showFilterPanel` | `boolean` | `false` | Shows the advanced multi-condition AND/OR Filter Builder drawer. |
 
 ### Editing Props
+
 | Prop | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `editable` | `boolean` | `false` | Enables double-click inline cell editing across all editable columns. |
@@ -99,11 +103,12 @@ export function App() {
 | `enableUndo` | `boolean` | `false` | Tracks edit history allowing Ctrl+Z (Undo) and Ctrl+Y (Redo). |
 
 ### Right-Click Context Menu Props
+
 | Prop | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `enableContextMenu` | `boolean` | `false` | Enables the built-in right-click context menu on grid cells. |
-| `contextMenuItems` | `ContextMenuItem<T>[]` | `DEFAULT` | Array of built-in or custom context menu items with callbacks. |
-| `onContextMenuAction` | `(actionId: string, params: ContextMenuActionParams<T>) => void` | `undefined` | Fired when a context menu item action executes. |
+| `contextMenuItems` | `ContextMenuItem[]` | `DEFAULT` | Array of built-in or custom context menu items with callbacks. |
+| `onContextMenuAction` | `(actionId: string, params: ContextMenuActionParams) => void` | `undefined` | Fired when a context menu item action executes. |
 
 #### Built-In Context Menu Actions
 The following string identifiers can be included in your `contextMenuItems` array:
@@ -178,15 +183,17 @@ Use the `onPaginationChanged` callback to react to page changes:
 />
 
 ### Grouping, Tree & Master-Detail Props
+
 | Prop | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `showGroupPanel` | `boolean` | `false` | Shows top drag-and-drop panel to group rows by columns. |
 | `treeData` | `boolean` | `false` | Enables hierarchical tree row rendering using parent-child row nodes. |
 | `masterDetail` | `boolean` | `false` | Enables expandable row detail views. |
-| `detailCellRenderer` | `(params: DetailCellRendererParams<T>) => ReactNode` | `undefined` | Custom React renderer for expanded detail rows. |
+| `detailCellRenderer` | `(params: DetailCellRendererParams) => ReactNode` | `undefined` | Custom React renderer for expanded detail rows. |
 | `detailRowHeight` | `number` | `180` | Pixel height reserved for expanded detail view rows. |
 
 ### Server-Side Data Props
+
 | Prop | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `serverSideDatasource` | `IServerSideDatasource` | `undefined` | Enterprise Server-Side Row Model (SSRM) data provider. |
@@ -194,11 +201,11 @@ Use the `onPaginationChanged` callback to react to page changes:
 
 ---
 
-## Column Definition Reference (`ColDef<T>`)
+## Column Definition Reference (`ColDef`)
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
-| `field` | `keyof T \| string` | Object property field name to bind cell value. |
+| `field` | `string` | Object property field name to bind cell value. |
 | `headerName` | `string` | Display title shown in column header. |
 | `colId` | `string` | Unique identifier for column (defaults to `field`). |
 | `width` | `number` | Initial column width in pixels. |
@@ -214,10 +221,10 @@ Use the `onPaginationChanged` callback to react to page changes:
 | `cellEditor` | `'text' \| 'number' \| 'select' \| 'date' \| 'textarea' \| 'json' \| 'image' \| 'html' \| 'video'` | Built-in cell editor type when entering edit mode. |
 | `cellEditorParams` | `{ options?: string[] }` | Option choices passed to `'select'` cell editor. |
 | `jsonTrigger` | `'dblclick' \| 'none'` | Controls how the JSON popup opens for `columnType: 'json'` columns. `'dblclick'` (default) opens on double-click; `'none'` disables the modal entirely. |
-| `cellRenderer` | `(params: CellRendererParams<T>) => ReactNode` | Custom React element renderer for cells in this column. |
-| `headerRenderer` | `(params: HeaderRendererParams<T>) => ReactNode` | Custom React renderer for the column header cell. |
-| `valueGetter` | `(params: ValueGetterParams<T>) => any` | Function to compute dynamic or nested cell values. |
-| `valueFormatter` | `(params: ValueFormatterParams<T>) => string` | Function to format raw values into display text (e.g. currency). |
+| `cellRenderer` | `(params: CellRendererParams) => ReactNode` | Custom React element renderer for cells in this column. |
+| `headerRenderer` | `(params: HeaderRendererParams) => ReactNode` | Custom React renderer for the column header cell. |
+| `valueGetter` | `(params: ValueGetterParams) => any` | Function to compute dynamic or nested cell values. |
+| `valueFormatter` | `(params: ValueFormatterParams) => string` | Function to format raw values into display text (e.g. currency). |
 
 ### Dynamic Multi-Select Column Picker (`ColumnPicker`)
 
@@ -477,22 +484,22 @@ V_Grid provides comprehensive event callbacks for user interactions, column mani
 
 | Event Callback | Event Object Signature | Description |
 | :--- | :--- | :--- |
-| `onGridReady` | `{ api: GridApi<T> }` | Fired once when the grid initializes and the API is ready for use. |
+| `onGridReady` | `{ api: GridApi }` | Fired once when the grid initializes and the API is ready for use. |
 | `onColumnMoved` | `{ colId: string, fromIndex: number, toIndex: number }` | Fired when a user drags a column header to reorder columns. |
 | `onColumnResized` | `{ colId: string, newWidth: number }` | Fired when a user drags a column border to resize column width. |
 | `onColumnVisibilityChanged` | `{ colId: string, visible: boolean }` | Fired when a column is shown or hidden. |
-| `onSelectionChanged` | `{ selectedRows: T[], selectedNodes: RowNode<T>[] }` | Fired whenever row selection changes via click, drag, or checkbox. |
-| `onCellValueChanged` | `{ data: T, colDef: ColDef<T>, oldValue: any, newValue: any, rowIndex: number }` | Fired when inline cell editing is committed. |
-| `onRowClicked` | `{ data: T, rowIndex: number, event: MouseEvent }` | Fired when a row is clicked. |
-| `onRowDoubleClicked` | `{ data: T, rowIndex: number, event: MouseEvent }` | Fired when a row is double clicked. |
-| `onCellClicked` | `{ data: T, colDef: ColDef<T>, value: any, rowIndex: number, event: MouseEvent }` | Fired when a specific cell is clicked. |
-| `onCellDoubleClicked` | `{ data: T, colDef: ColDef<T>, value: any, rowIndex: number, event: MouseEvent }` | Fired when a specific cell is double clicked. |
+| `onSelectionChanged` | `{ selectedRows: any[], selectedNodes: RowNode[] }` | Fired whenever row selection changes via click, drag, or checkbox. |
+| `onCellValueChanged` | `{ data: any, colDef: ColDef, oldValue: any, newValue: any, rowIndex: number }` | Fired when inline cell editing is committed. |
+| `onRowClicked` | `{ data: any, rowIndex: number, event: MouseEvent }` | Fired when a row is clicked. |
+| `onRowDoubleClicked` | `{ data: any, rowIndex: number, event: MouseEvent }` | Fired when a row is double clicked. |
+| `onCellClicked` | `{ data: any, colDef: ColDef, value: any, rowIndex: number, event: MouseEvent }` | Fired when a specific cell is clicked. |
+| `onCellDoubleClicked` | `{ data: any, colDef: ColDef, value: any, rowIndex: number, event: MouseEvent }` | Fired when a specific cell is double clicked. |
 | `onFilterChanged` | `{ filterModel: FilterModel }` | Fired when any column filter or global search is updated. |
 | `onSortChanged` | `{ sortModel: SortModel[] }` | Fired when column sorting changes. |
 | `onPaginationChanged` | `{ currentPage: number, totalPages: number, pageSize: number, totalRows: number }` | Fired when page number or page size changes. |
-| `onContextMenuAction` | `(actionId: string, params: ContextMenuActionParams<T>) => void` | Fired when a right-click context menu option is executed. |
+| `onContextMenuAction` | `(actionId: string, params: ContextMenuActionParams) => void` | Fired when a right-click context menu option is executed. |
 | `onCopySelection` | `(data: CopiedSelectionData) => void` | Fired when cell range copy action is executed (Ctrl+C). |
-| `onRowGroupOpened` | `{ node: GroupNode<T> }` | Fired when a row group node is expanded or collapsed. |
+| `onRowGroupOpened` | `{ node: GroupNode }` | Fired when a row group node is expanded or collapsed. |
 | `onRowGroupChanged` | `{ groupColIds: string[] }` | Fired when active row grouping columns change. |
 
 
