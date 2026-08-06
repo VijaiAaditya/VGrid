@@ -128,6 +128,7 @@ export type {
   ColumnType,
 
   // Pagination
+  PaginationConfig,
   PaginationChangedEvent,
 } from './types'
 

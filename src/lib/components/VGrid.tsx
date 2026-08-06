@@ -168,9 +168,7 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
     onContextMenuAction,
 
     // Phase 3 — Pagination
-    pagination = false,
-    paginationPageSize: initialPageSize = 25,
-    paginationPageSizeOptions = [10, 25, 50, 100],
+    pagination = null,
     onPaginationChanged,
 
     // Events
@@ -242,7 +240,9 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
     selectionData: CopiedSelectionData | null
   } | null>(null)
   const [page, setPage] = useState(0)
-  const [pageSize, setPageSizeState] = useState(initialPageSize)
+  const [pageSize, setPageSizeState] = useState(() => pagination?.pageSize ?? 25)
+  const paginationEnabled = pagination != null
+  const paginationPageSizeOptions = pagination?.pageSizeOptions ?? [10, 25, 50, 100]
   const [rowJsonModalData, setRowJsonModalData] = useState<{ title: string; value: unknown } | null>(null)
 
   // ── Undo stack ────────────────────────────────────────────────────────────
@@ -1096,13 +1096,13 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
 
   // ── Pagination computed values ────────────────────────────────────────────
   const totalRows = displayedRows.length
-  const totalPages = pagination ? Math.max(1, Math.ceil(totalRows / pageSize)) : 1
+  const totalPages = paginationEnabled ? Math.max(1, Math.ceil(totalRows / pageSize)) : 1
   const clampedPage = Math.min(page, Math.max(0, totalPages - 1))
   const paginatedFlatItems = useMemo(() => {
-    if (!pagination || groupByColIds.length > 0 || treeData) return flatItems
+    if (!paginationEnabled || groupByColIds.length > 0 || treeData) return flatItems
     const start = clampedPage * pageSize
     return flatItems.slice(start, start + pageSize)
-  }, [flatItems, pagination, clampedPage, pageSize, groupByColIds.length, treeData])
+  }, [flatItems, paginationEnabled, clampedPage, pageSize, groupByColIds.length, treeData])
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
@@ -1378,7 +1378,7 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
       {undoToast && <UndoToast message={undoToast} />}
 
       {/* Pagination Panel */}
-      {pagination && (
+      {paginationEnabled && (
         <PaginationPanel
           currentPage={clampedPage}
           totalPages={totalPages}

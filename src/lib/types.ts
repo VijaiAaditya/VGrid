@@ -647,9 +647,8 @@ export interface GridOptions<T = RowData> {
   onRedoStarted?: () => void
 
   // ── Phase 3: Pagination ──────────────────────────────────────────────────
-  pagination?: boolean
-  paginationPageSize?: number
-  paginationPageSizeOptions?: number[]
+  /** Pass a config object to enable pagination, or null/undefined to disable */
+  pagination?: PaginationConfig | null
   onPaginationChanged?: (event: PaginationChangedEvent) => void
 
   // ── Phase 3: Column Visibility Panel ────────────────────────────────────
@@ -858,6 +857,13 @@ export interface RowGroupChangedEvent {
 
 // ─── Pagination ──────────────────────────────────────────────────────────────
 
+export interface PaginationConfig {
+  /** Number of rows per page (default: 25) */
+  pageSize?: number
+  /** Available page-size options shown in the page-size selector (default: [10, 25, 50, 100]) */
+  pageSizeOptions?: number[]
+}
+
 export interface PaginationChangedEvent {
   currentPage: number
   totalPages: number
@@ -1009,9 +1015,8 @@ export interface FormulaCellMeta {
 
 export interface GridOptionsPhase3<T = RowData> {
   // ── Pagination ──────────────────────────────────────────────────────────────
-  pagination?: boolean
-  paginationPageSize?: number
-  paginationPageSizeOptions?: number[]
+  /** Pass a config object to enable pagination, or null/undefined to disable */
+  pagination?: PaginationConfig | null
   onPaginationChanged?: (event: PaginationChangedEvent) => void
 
   // ── Column Visibility Panel ─────────────────────────────────────────────────

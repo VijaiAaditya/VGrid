@@ -554,9 +554,7 @@ export default function App() {
 
           // Context menu & pagination options demo
           enableContextMenu={true}
-          pagination={mode === 'callbacks'}
-          paginationPageSize={10}
-          paginationPageSizeOptions={[5, 10, 20, 50]}
+          pagination={mode === 'callbacks' ? { pageSize: 10, pageSizeOptions: [5, 10, 20, 50] } : null}
           onPaginationChanged={(e) => {
             if (mode === 'callbacks') alert(`Event: onPaginationChanged | Page: ${e.currentPage}, PageSize: ${e.pageSize}, TotalPages: ${e.totalPages}`)
             console.log('[VGrid Callback] onPaginationChanged:', e)
