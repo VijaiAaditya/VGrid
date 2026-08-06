@@ -146,6 +146,7 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
     enableFilterPanel = false,
     enableFillHandle = false,
     fillHandleDirection = 'y',
+    excelExportParams,
 
     // Master-Detail
     masterDetail = false,
@@ -931,12 +932,27 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
       api
     ),
     exportDataAsXlsx: (params) => {
+      const exportParams = { ...excelExportParams, ...params }
+      const nodes = exportParams.exportMode === 'all'
+        ? useStore.getState().getUnfilteredRowNodes(getRowId)
+        : useStore.getState().displayedRowNodes
+
+      let exportFlatItems: FlatItem<T>[]
+      if (treeData && getDataPath) {
+        exportFlatItems = buildTreeFromData(nodes, getDataPath, treeExpandedIds, autoExpandAll)
+      } else if (groupByColIds.length > 0) {
+        const tree = buildGroupTree(nodes, groupByColIds, columnsWithAgg, expandedGroupIds)
+        exportFlatItems = flattenGroupTree(tree)
+      } else {
+        exportFlatItems = wrapRowNodesAsFlatItems(nodes)
+      }
+
       import('../features/xlsxExporter')
         .then(({ exportDataAsXlsx }) => {
           exportDataAsXlsx(
-            flatItems,
+            exportFlatItems,
             useStore.getState().columns,
-            params
+            exportParams
           )
         })
         .catch((err) => {

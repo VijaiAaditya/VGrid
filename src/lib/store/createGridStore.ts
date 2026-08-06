@@ -73,6 +73,7 @@ export interface GridStoreState<T = RowData> {
   setFilterModel: (model: FilterModel) => void
   setQuickFilter: (text: string) => void
   computeDisplayedRows: (getRowId?: (d: T) => RowId) => void
+  getUnfilteredRowNodes: (getRowId?: (d: T) => RowId) => RowNode<T>[]
 
   // Selection actions
   selectRow: (rowIndex: number, addToSelection: boolean, range: boolean) => void
@@ -468,6 +469,25 @@ export function createGridStore<T = RowData>() {
       nodes = nodes.map((n) => ({ ...n, isExpanded: expandedRowIds.has(n.id) }))
 
       set({ displayedRowNodes: nodes })
+    },
+
+    getUnfilteredRowNodes: (getRowId) => {
+      const { rowData, sortModel, columns, selectedRowIds, expandedRowIds } = get()
+
+      // Build row nodes
+      let nodes: RowNode<T>[] = rowData.map((data, i) => ({
+        id: getRowId ? getRowId(data) : i,
+        data,
+        rowIndex: i,
+        isSelected: selectedRowIds.has(getRowId ? getRowId(data) : i),
+        isExpanded: expandedRowIds.has(getRowId ? getRowId(data) : i),
+      }))
+
+      // Sort
+      nodes = sortRows(nodes, sortModel, columns)
+
+      // Re-assign rowIndex after sort
+      return nodes.map((n, i) => ({ ...n, rowIndex: i }))
     },
 
     // ── Selection Actions ─────────────────────────────────────────────────────

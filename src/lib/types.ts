@@ -654,6 +654,8 @@ export interface GridOptions<T = RowData> {
   // ── Phase 2: XLSX Export ─────────────────────────────────────────────────
   /** Extra XLSX export options */
   excelStyles?: ExcelStyleDef[]
+  /** Default configuration options for XLSX exports */
+  excelExportParams?: XlsxExportParams
 
   // ── Phase 2: Events ──────────────────────────────────────────────────────
   onRowGroupOpened?: (event: RowGroupOpenedEvent<T>) => void
@@ -843,6 +845,8 @@ export interface XlsxExportParams {
   includeGroups?: boolean
   /** Style definitions keyed by name */
   styles?: ExcelStyleDef[]
+  /** Export mode: 'all' to export all original data, 'filtered' (default) to export filtered/sorted data */
+  exportMode?: 'all' | 'filtered'
 }
 
 export interface ExcelStyleDef {
