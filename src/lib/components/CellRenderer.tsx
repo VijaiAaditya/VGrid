@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useRef, useEffect, useState } from 'react'
 import type { InternalColDef } from '../store/createGridStore'
 import type { RowData, RowNode, CellPosition, GridApi, CellClickedEvent, CellDoubleClickedEvent, CellValueChangedEvent } from '../types'
-import { getFieldValue } from '../store/createGridStore'
+import { getFieldValue } from '../utils/valueGetter'
 import { JsonModal } from './JsonModal'
 import { MediaModal } from './MediaModal'
 

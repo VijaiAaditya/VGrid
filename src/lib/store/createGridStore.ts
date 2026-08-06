@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { getFieldValue } from '../utils/valueGetter'
 import type {
   ColDef,
   RowData,
@@ -94,18 +95,7 @@ export interface GridStoreState<T = RowData> {
   setScrollLeft: (v: number) => void
 }
 
-// ─── Helper: get value from row data by field (dot notation) ──────────────────
 
-export function getFieldValue(data: RowData, field: string): unknown {
-  if (!field) return undefined
-  const parts = field.split('.')
-  let cur: unknown = data
-  for (const p of parts) {
-    if (cur == null || typeof cur !== 'object') return undefined
-    cur = (cur as Record<string, unknown>)[p]
-  }
-  return cur
-}
 
 // ─── Helper: flatten grouped ColDefs into a flat list ────────────────────────
 

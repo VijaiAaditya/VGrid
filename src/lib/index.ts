@@ -133,4 +133,4 @@ export type {
 } from './types'
 
 // ─── Utilities (for custom renderers etc.) ────────────────────────────────────
-export { getFieldValue } from './store/createGridStore'
+export { getFieldValue } from './utils/valueGetter'

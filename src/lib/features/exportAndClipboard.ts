@@ -1,7 +1,7 @@
-﻿import type { RowNode, ColDef, RowData, CellRange, CsvExportParams, GridApi } from '../types'
+import type { RowNode, ColDef, RowData, CellRange, CsvExportParams, GridApi } from '../types'
 import type { CopiedSelectionData } from '../types'
 import type { InternalColDef } from '../store/createGridStore'
-import { getFieldValue } from '../store/createGridStore'
+import { getFieldValue } from '../utils/valueGetter'
 
 // ─── CSV Export ───────────────────────────────────────────────────────────────
 

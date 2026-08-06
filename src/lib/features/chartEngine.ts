@@ -3,7 +3,7 @@
  */
 
 import type { RowNode, RowData, ChartConfig, ChartDataset, AggregationFunction } from '../types'
-import { getFieldValue } from '../store/createGridStore'
+import { getFieldValue } from '../utils/valueGetter'
 import { computeAggregation } from './groupEngine'
 
 export interface ChartData {

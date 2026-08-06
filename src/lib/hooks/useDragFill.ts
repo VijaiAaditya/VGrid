@@ -1,7 +1,7 @@
 import { useCallback, useRef } from 'react'
 import type { CellRange, RowData, RowNode } from '../types'
 import type { InternalColDef } from '../store/createGridStore'
-import { getFieldValue } from '../store/createGridStore'
+import { getFieldValue } from '../utils/valueGetter'
 
 interface DragFillOptions<T> {
   cellRange: CellRange | null

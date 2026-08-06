@@ -12,7 +12,7 @@ export default defineConfig({
     dts({
       rollupTypes: true,
       insertTypesEntry: true,
-      include: ['src/lib/**/*', 'src/excel.ts'],
+      include: ['src/lib/**/*', 'src/index.ts', 'src/excel.ts'],
       exclude: ['src/demo/**/*'],
     }),
   ],
@@ -30,9 +30,8 @@ export default defineConfig({
     sourcemap: false,
     reportCompressedSize: true,
     rollupOptions: {
-      // zustand is bundled inline (not external) so users don't need it as a dep.
-      // xlsx is kept external because it's large (~1 MB) and optional.
-      external: ['react', 'react-dom', 'react/jsx-runtime', 'xlsx'],
+      // zustand and xlsx are kept external to minimize bundle size.
+      external: ['react', 'react-dom', 'react/jsx-runtime', 'xlsx', 'zustand'],
       output: {
         // Inline the store chunk into the main bundle — eliminates stray createGridStore-*.js files
         inlineDynamicImports: false,

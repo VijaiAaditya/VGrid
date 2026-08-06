@@ -8,7 +8,8 @@ import type {
   XlsxExportParams, IServerSideDatasource, IInfiniteDatasource,
   FloatingFilterOperator, ContextMenuActionParams, CopiedSelectionData,
 } from '../types'
-import { createGridStore, getFieldValue, type InternalColDef } from '../store/createGridStore'
+import { createGridStore, type InternalColDef } from '../store/createGridStore'
+import { getFieldValue } from '../utils/valueGetter'
 
 import { useVirtualizer } from '../hooks/useVirtualizer'
 import { useRangeSelection } from '../hooks/useRangeSelection'

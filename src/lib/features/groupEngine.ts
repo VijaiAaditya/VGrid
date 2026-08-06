@@ -1,6 +1,6 @@
 import type { RowNode, RowData, GroupNode, FlatItem, AggregationFunction } from '../types'
 import type { InternalColDef } from '../store/createGridStore'
-import { getFieldValue } from '../store/createGridStore'
+import { getFieldValue } from '../utils/valueGetter'
 
 // ─── Aggregation Engine ───────────────────────────────────────────────────────
 

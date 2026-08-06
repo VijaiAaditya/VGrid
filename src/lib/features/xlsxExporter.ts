@@ -1,7 +1,17 @@
 import * as XLSX from 'xlsx'
 import type { RowNode, RowData, FlatItem, XlsxExportParams, GroupNode } from '../types'
 import type { InternalColDef } from '../store/createGridStore'
-import { getFieldValue } from '../store/createGridStore'
+// Local helper to avoid importing from main bundle (prevents shared chunk creation)
+function getFieldValue(data: RowData, field: string): unknown {
+  if (!field) return undefined
+  const parts = field.split('.')
+  let cur: unknown = data
+  for (const p of parts) {
+    if (cur == null || typeof cur !== 'object') return undefined
+    cur = (cur as Record<string, unknown>)[p]
+  }
+  return cur
+}
 
 /**
  * XLSX Exporter — generates a true .xlsx file with:
