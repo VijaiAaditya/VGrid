@@ -26,22 +26,30 @@ export default defineConfig({
       formats: ['es', 'cjs'],
     },
     minify: 'esbuild',
+    cssMinify: 'esbuild',
+    sourcemap: false,
+    reportCompressedSize: true,
     rollupOptions: {
-      external: ['react', 'react-dom', 'react/jsx-runtime', 'xlsx', 'zustand'],
+      // zustand is bundled inline (not external) so users don't need it as a dep.
+      // xlsx is kept external because it's large (~1 MB) and optional.
+      external: ['react', 'react-dom', 'react/jsx-runtime', 'xlsx'],
       output: {
-        globals: {
-          react: 'React',
-          'react-dom': 'ReactDOM',
-          'react/jsx-runtime': 'jsxRuntime',
-          zustand: 'create',
-          xlsx: 'XLSX',
-        },
+        // Inline the store chunk into the main bundle — eliminates stray createGridStore-*.js files
+        inlineDynamicImports: false,
+        manualChunks: undefined,
+        // globals only needed for UMD/IIFE, not used here (ES + CJS only)
+      },
+      treeshake: {
+        moduleSideEffects: false,
+        propertyReadSideEffects: false,
       },
     },
     cssCodeSplit: false,
   },
   esbuild: {
     drop: ['console', 'debugger'],
+    // Strip all comments (copyright/license) from the output
+    legalComments: 'none',
   },
   resolve: {
     alias: {

@@ -1,2 +1,23 @@
+# Source & build artefacts
+src/
+scripts/
+node_modules/
+.github/
+.vs/
+.git/
+
+# Config & tooling
+vite.config.ts
+vite.lib.config.ts
+tsconfig.json
+tsconfig.node.json
+index.html
+
+# Documentation (full versions)
 README.full.md
 README.npm.md
+walkthrough.md
+
+# Backup / scratch files
+*.bak
+*.local

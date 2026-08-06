@@ -9,23 +9,14 @@
   --vg-font-mono: 'JetBrains Mono', 'Fira Code', monospace;
   --vg-font-size-sm: 12px;
   --vg-font-size-base: 13px;
-  --vg-font-size-md: 14px;
-  --vg-font-weight-normal: 400;
   --vg-font-weight-medium: 500;
   --vg-font-weight-bold: 600;
 
   /* ── Spacing ─────────────────────────────────────────────── */
-  --vg-cell-padding-h: 12px;
-  --vg-cell-padding-v: 0px;
   --vg-header-padding-h: 12px;
 
   /* ── Sizing ──────────────────────────────────────────────── */
-  --vg-row-height: 40px;
-  --vg-header-height: 48px;
-  --vg-filter-height: 36px;
-  --vg-border-radius: 6px;
   --vg-scrollbar-width: 8px;
-  --vg-resize-handle-width: 4px;
   --vg-checkbox-size: 16px;
 
   /* ── Borders ─────────────────────────────────────────────── */
@@ -34,15 +25,10 @@
 
   /* ── Transitions ─────────────────────────────────────────── */
   --vg-transition-fast: 100ms ease;
-  --vg-transition-base: 150ms ease;
-  --vg-transition-slow: 250ms ease;
 
   /* ── Z-index Layers ──────────────────────────────────────── */
   --vg-z-header: 10;
   --vg-z-pinned: 11;
-  --vg-z-overlay: 20;
-  --vg-z-editor: 30;
-  --vg-z-tooltip: 40;
 }
 
 /* ============================================================
@@ -67,7 +53,6 @@
   --vg-bg-range-border: rgba(74, 108, 247, 0.8);
   --vg-bg-detail: #f5f7fa;
   --vg-bg-fullwidth: #fff8e1;
-  --vg-bg-tooltip: #1e2330;
 
   /* Text */
   --vg-text-primary: #1a1d2e;
@@ -75,7 +60,6 @@
   --vg-text-muted: #9098ad;
   --vg-text-header: #374151;
   --vg-text-selected: #1a3fa8;
-  --vg-text-tooltip: #f0f2f8;
   --vg-text-placeholder: #b0b8c9;
 
   /* Borders */
@@ -87,10 +71,8 @@
   /* Accent */
   --vg-accent: #4a6cf7;
   --vg-accent-light: #eef2ff;
-  --vg-accent-dark: #3451d1;
   --vg-accent-danger: #ef4444;
   --vg-accent-success: #10b981;
-  --vg-accent-warning: #f59e0b;
 
   /* Checkbox */
   --vg-checkbox-bg: #ffffff;
@@ -111,7 +93,6 @@
   --vg-shadow-pinned: 4px 0 8px rgba(0, 0, 0, 0.08);
   --vg-shadow-pinned-right: -4px 0 8px rgba(0, 0, 0, 0.08);
   --vg-shadow-editor: 0 4px 16px rgba(0, 0, 0, 0.12);
-  --vg-shadow-tooltip: 0 8px 24px rgba(0, 0, 0, 0.16);
 }
 
 /* ============================================================
@@ -135,7 +116,6 @@
   --vg-bg-range-border: rgba(100, 139, 255, 0.7);
   --vg-bg-detail: #111520;
   --vg-bg-fullwidth: #1a160a;
-  --vg-bg-tooltip: #2a3050;
 
   /* Text */
   --vg-text-primary: #e4e8f0;
@@ -143,7 +123,6 @@
   --vg-text-muted: #5a6480;
   --vg-text-header: #c2c9d8;
   --vg-text-selected: #7fa8ff;
-  --vg-text-tooltip: #e4e8f0;
   --vg-text-placeholder: #3d4560;
 
   /* Borders */
@@ -155,10 +134,8 @@
   /* Accent */
   --vg-accent: #648bff;
   --vg-accent-light: #1e2747;
-  --vg-accent-dark: #4a6cf7;
   --vg-accent-danger: #f87171;
   --vg-accent-success: #34d399;
-  --vg-accent-warning: #fbbf24;
 
   /* Checkbox */
   --vg-checkbox-bg: #1a2035;
@@ -179,5 +156,4 @@
   --vg-shadow-pinned: 4px 0 8px rgba(0, 0, 0, 0.4);
   --vg-shadow-pinned-right: -4px 0 8px rgba(0, 0, 0, 0.4);
   --vg-shadow-editor: 0 4px 16px rgba(0, 0, 0, 0.4);
-  --vg-shadow-tooltip: 0 8px 24px rgba(0, 0, 0, 0.5);
 }

@@ -16,16 +16,15 @@
 .vgrid-root {
   font-family: var(--vg-font-family);
   font-size: var(--vg-font-size-base);
-  font-weight: var(--vg-font-weight-normal);
+  font-weight: 400;
   color: var(--vg-text-primary);
   background: var(--vg-bg-grid);
   border: var(--vg-border-width) var(--vg-border-style) var(--vg-border-color);
-  border-radius: var(--vg-border-radius);
+  border-radius: 6px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   position: relative;
-  /* contain layout so nothing bleeds out */
   contain: strict;
   isolation: isolate;
 }
@@ -97,7 +96,7 @@
 
 .vgrid-header-row {
   display: flex;
-  height: var(--vg-header-height);
+  height: 48px;
   align-items: stretch;
 }
 
@@ -183,7 +182,7 @@
   right: -2px;
   top: 0;
   bottom: 0;
-  width: var(--vg-resize-handle-width);
+  width: 4px;
   cursor: col-resize;
   z-index: 2;
   background: transparent;
@@ -198,7 +197,7 @@
 /* ── Filter Row ──────────────────────────────────────────── */
 .vgrid-filter-row {
   display: flex;
-  height: var(--vg-filter-height);
+  height: 36px;
   align-items: center;
   border-top: var(--vg-border-width) var(--vg-border-style) var(--vg-border-color);
   background: var(--vg-bg-filter);
@@ -316,7 +315,7 @@
 .vgrid-cell {
   display: flex;
   align-items: center;
-  padding: var(--vg-cell-padding-v) var(--vg-cell-padding-h);
+  padding: 0 12px;
   border-right: var(--vg-border-width) var(--vg-border-style) var(--vg-border-color);
   overflow: hidden;
   white-space: nowrap;
@@ -337,7 +336,7 @@
 .vgrid-cell--editing {
   padding: 4px 6px;
   overflow: visible;
-  z-index: var(--vg-z-editor);
+  z-index: 30;
 }
 
 .vgrid-cell__content {
@@ -350,7 +349,7 @@
 /* ── Cell Editor ─────────────────────────────────────────── */
 .vgrid-cell-editor {
   width: 100%;
-  height: calc(var(--vg-row-height) - 8px);
+  height: 32px;
   padding: 0 8px;
   border: var(--vg-border-width) var(--vg-border-style) var(--vg-border-editing);
   border-radius: 4px;
@@ -538,7 +537,7 @@
   border: 2px solid var(--vg-bg-range-border);
   background: var(--vg-bg-range);
   border-radius: 2px;
-  z-index: var(--vg-z-overlay);
+  z-index: 20;
   transition: none;
 }
 
@@ -552,7 +551,7 @@
   justify-content: center;
   gap: 12px;
   color: var(--vg-text-muted);
-  font-size: var(--vg-font-size-md);
+  font-size: 14px;
   background: var(--vg-bg-grid);
   z-index: 5;
   pointer-events: none;
@@ -845,39 +844,15 @@
 }
 
 /* ── Row indent for grouped/tree rows ────────────────────── */
-.vgrid-root .vgrid-row--level-1 .vgrid-cell:first-child { padding-left: calc(var(--vg-cell-padding-x) + 20px); }
-.vgrid-root .vgrid-row--level-2 .vgrid-cell:first-child { padding-left: calc(var(--vg-cell-padding-x) + 40px); }
-.vgrid-root .vgrid-row--level-3 .vgrid-cell:first-child { padding-left: calc(var(--vg-cell-padding-x) + 60px); }
-.vgrid-root .vgrid-row--level-4 .vgrid-cell:first-child { padding-left: calc(var(--vg-cell-padding-x) + 80px); }
-
-/* ── Pinned rows ─────────────────────────────────────────── */
-.vgrid-pinned-rows-top,
-.vgrid-pinned-rows-bottom {
-  flex-shrink: 0;
-  z-index: 3;
-  background: var(--vg-bg-header);
-  border-color: var(--vg-border-color);
-}
-
-.vgrid-pinned-rows-top {
-  border-bottom: 2px solid var(--vg-accent);
-}
-
-.vgrid-pinned-rows-bottom {
-  border-top: 2px solid var(--vg-accent);
-}
-
-.vgrid-pinned-row {
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid var(--vg-border-color);
-  font-weight: var(--vg-font-weight-bold);
-}
+.vgrid-root .vgrid-row--level-1 .vgrid-cell:first-child { padding-left: calc(12px + 20px); }
+.vgrid-root .vgrid-row--level-2 .vgrid-cell:first-child { padding-left: calc(12px + 40px); }
+.vgrid-root .vgrid-row--level-3 .vgrid-cell:first-child { padding-left: calc(12px + 60px); }
+.vgrid-root .vgrid-row--level-4 .vgrid-cell:first-child { padding-left: calc(12px + 80px); }
 
 /* ── JSON Column & Cell Styling ───────────────────────────── */
 .vgrid-root .vgrid-cell--json {
   font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
-  font-size: var(--vg-font-size-xs, 12px);
+  font-size: 12px;
 }
 
 .vgrid-root .vgrid-cell-json {

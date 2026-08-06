@@ -67,9 +67,6 @@
     "url": "https://github.com/VijaiAaditya/VGrid/issues"
   },
   "homepage": "https://github.com/VijaiAaditya/VGrid#readme",
-  "dependencies": {
-    "zustand": "^4.5.2"
-  },
   "devDependencies": {
     "@types/node": "^26.1.1",
     "@types/react": "^18.3.3",
@@ -79,6 +76,7 @@
     "react-dom": "^18.3.1",
     "typescript": "^5.5.3",
     "vite": "^5.4.1",
-    "vite-plugin-dts": "^4.0.0"
+    "vite-plugin-dts": "^4.0.0",
+    "zustand": "^4.5.2"
   }
 }
