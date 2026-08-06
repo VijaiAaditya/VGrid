@@ -32,7 +32,6 @@ export function App() {
   ]
 
   const columnDefs = [
-    { field: 'id', headerName: '#', width: 70, pinned: 'left' },
     { field: 'name', headerName: 'Employee Name', sortable: true, filter: 'text' },
     { field: 'department', headerName: 'Department', filter: 'excel', filterParams: { options: ['Engineering', 'Sales', 'HR', 'Marketing'] } },
     { field: 'salary', headerName: 'Salary', filter: 'number', valueFormatter: (p) => `$${Number(p.value).toLocaleString()}` },
@@ -45,6 +44,7 @@ export function App() {
       <VGrid
         rowData={rowData}
         columnDefs={columnDefs}
+        rowNumberColumn={{ clickToOpenJsonModal: true }}
         rowSelection="multiple"
         checkboxSelection={true}
         enableContextMenu={true}
@@ -76,6 +76,7 @@ export function App() {
 | :--- | :--- | :--- | :--- |
 | `rowSelection` | `'multiple' \| 'single'` | `'multiple'` | Enable single or multi-row selection. |
 | `checkboxSelection` | `boolean` | `false` | Automatically adds a pinned left checkbox selection column. |
+| `rowNumberColumn` | `boolean` | `false` | Prepends a read-only serial number (#) column. If `rowClickJsonModal` is also `true`, clicking the serial cell opens the row data JSON popup. |
 | `suppressRowClickSelection` | `boolean` | `false` | When true, row click does not alter row selection. |
 | `enableRangeSelection` | `boolean` | `false` | Enables Excel-style rectangular cell range drag-selection. |
 | `enableFillHandle` | `boolean` | `false` | Shows an Excel-style fill handle on selected cell ranges. |
@@ -297,15 +298,18 @@ export function MyToolbar({ columns, handleToggle, handleFullLayoutSave }) {
 
 ---
 
-### Whole-Row Data JSON Popup (`rowClickJsonModal: true`)
+### Whole-Row Data JSON Popup (`rowNumberColumn: { clickToOpenJsonModal: true }`)
 
-By setting `rowClickJsonModal={true}` on `<VGrid />`, users can double-click on the row index number cell (`#` / `id` column) or checkbox selection cell to view the **entire raw row object with all existing fields** (including unpopulated or hidden column data) inside the interactive `JsonModal` popup.
+By setting `rowNumberColumn={{ clickToOpenJsonModal: true }}` on `<VGrid />`, a dedicated serial-number (`#`) column is prepended. 
+- A single click on the serial-number cell opens an interactive `JsonModal` popup showing the **entire raw row object with all fields**.
+- The serial-number cell is read-only (no edit cursor, no inline editing).
+- Visually, hovering over the cell shows a subtle `👁` eye icon as a guide.
 
 ```tsx
 <VGrid
   rowData={rowData}
   columnDefs={columnDefs}
-  rowClickJsonModal={true} // Double-click row index cell (#/id) to open complete raw row JSON popup
+  rowNumberColumn={{ clickToOpenJsonModal: true }} // Enable serial-number column + single-click popup
 />
 ```
 

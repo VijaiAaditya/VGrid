@@ -514,8 +514,16 @@ export interface GridOptions<T = RowData> {
   suppressRowClickSelection?: boolean
   /** Show checkbox column automatically */
   checkboxSelection?: boolean
-  /** Show whole row data in JSON modal on double-clicking index column cell or checkbox/index cell */
-  rowClickJsonModal?: boolean
+  /**
+   * Configuration for the dedicated serial-number column (#) prepended to the grid.
+   * - `false` / omitted: Column is not rendered.
+   * - `true`: Column is rendered with default settings (no popup).
+   * - object: Column is rendered with custom settings:
+   *   - `clickToOpenJsonModal?: boolean` — if `true`, clicking the serial cell opens the row data JSON popup.
+   */
+  rowNumberColumn?: boolean | {
+    clickToOpenJsonModal?: boolean
+  }
   /** Column picker configuration: boolean (`true`/`false`) or object `{ enabled?: boolean, position?: ColumnPickerPosition }`. Default: true */
   columnPicker?: ColumnPickerConfig
 

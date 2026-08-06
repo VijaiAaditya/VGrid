@@ -369,6 +369,62 @@
   cursor: pointer;
 }
 
+/* ── Serial Number Column ────────────────────────────────── */
+.vgrid-row-num-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 44px;
+  min-width: 44px;
+  max-width: 44px;
+  flex-shrink: 0;
+  border-right: var(--vg-border-width) var(--vg-border-style) var(--vg-border-color);
+  color: var(--vg-text-muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+  cursor: default;            /* never shows an edit/text cursor */
+}
+
+/* Header variant */
+.vgrid-row-num-cell--header {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  background: var(--vg-bg-header);
+  font-size: 11px;
+}
+
+/* Clickable variant — when rowClickJsonModal is enabled */
+.vgrid-row-num-cell--clickable {
+  cursor: pointer;
+  transition: background var(--vg-transition-fast), color var(--vg-transition-fast);
+}
+.vgrid-row-num-cell--clickable:hover {
+  background: var(--vg-row-hover-bg, rgba(79, 70, 229, 0.08));
+  color: var(--vg-accent, #4f46e5);
+}
+
+/* Row number text */
+.vgrid-row-num-cell__num {
+  transition: opacity var(--vg-transition-fast);
+}
+.vgrid-row-num-cell--clickable:hover .vgrid-row-num-cell__num {
+  opacity: 0;          /* fade out number on hover */
+}
+
+/* Eye hint icon — hidden by default, fades in on hover */
+.vgrid-row-num-cell__hint {
+  position: absolute;
+  font-size: 13px;
+  opacity: 0;
+  transition: opacity var(--vg-transition-fast);
+  pointer-events: none;
+}
+.vgrid-row-num-cell--clickable:hover .vgrid-row-num-cell__hint {
+  opacity: 1;          /* show 👁 eye icon on hover */
+}
+
 /* ── Checkbox ────────────────────────────────────────────── */
 .vgrid-checkbox-cell {
   display: flex;

@@ -115,7 +115,7 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
     enableRangeSelection = false,
     suppressRowClickSelection = false,
     checkboxSelection = false,
-    rowClickJsonModal = false,
+    rowNumberColumn = false,
     columnPicker = true,
     editable = false,
 
@@ -190,6 +190,10 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
     onUndoStarted,
     onRedoStarted,
   } = props
+
+  // ── Derive serial-number column settings from the unified rowNumberColumn prop ──
+  const showRowNumber   = !!rowNumberColumn
+  const rowClickJsonModal = (typeof rowNumberColumn === 'object' && rowNumberColumn !== null) ? !!rowNumberColumn.clickToOpenJsonModal : false
 
   // ── Per-instance store ────────────────────────────────────────────────────
   const storeRef = useRef(createGridStore<T>())
@@ -705,22 +709,11 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
     else if (col.field) value = getFieldValue(node.data as RowData, col.field)
     onCellDoubleClicked?.({ data: node.data, colDef: col, value, rowIndex: pos.rowIndex, event: e.nativeEvent })
 
-    const isIndexCol = col.field === 'id' || col._colId === 'id' || col.colId === 'id' || pos.colId === columns[0]?._colId
-
-    // If rowClickJsonModal is enabled and double clicked on index/id column or first column
-    if (rowClickJsonModal && isIndexCol) {
-      setRowJsonModalData({
-        title: `Row Data #${node.rowIndex + 1} (${getRowId ? getRowId(node.data) : node.id})`,
-        value: node.data,
-      })
-      return
-    }
-
     const isEditable = typeof col.editable === 'function'
       ? col.editable({ value, data: node.data, rowIndex: node.rowIndex })
       : (col.editable ?? editable)
     const isJsonCol = col.columnType === 'json' || col.cellEditor === 'json'
-    if (!singleClickEdit && !col.singleClickEdit && isEditable && !isIndexCol && !isJsonCol) {
+    if (!singleClickEdit && !col.singleClickEdit && isEditable && !isJsonCol) {
       useStore.getState().startEditing(pos)
     }
 
@@ -1203,6 +1196,7 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
         onFilterChange={handleFilterChange}
         onFilterOperatorChange={handleFilterOperatorChange}
         showCheckbox={showCheckbox || showMasterCol}
+        showRowNumber={showRowNumber}
         showColumnPicker={columnPickerEnabled && columnPickerPos === 'header'}
         onColumnToggle={handleColumnToggle}
 
@@ -1318,8 +1312,15 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
                     })
                   }
                 }}
+                onRowNumClick={() => {
+                  setRowJsonModalData({
+                    title: `Row Data #${node.rowIndex + 1} (${getRowId ? getRowId(node.data) : node.id})`,
+                    value: node.data,
+                  })
+                }}
                 showCheckbox={showCheckbox}
-
+                showRowNumber={showRowNumber}
+                rowClickJsonModal={rowClickJsonModal}
                 isMasterDetail={isMaster}
                 isFullWidth={isFullWidth}
                 fullWidthRenderer={fullWidthCellRenderer}

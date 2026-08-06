@@ -19,7 +19,11 @@ interface RowRendererProps<T> {
   onToggleExpand: (e: React.MouseEvent) => void
   onCheckboxChange: (checked: boolean) => void
   onCheckboxDoubleClick?: (e: React.MouseEvent) => void
+  /** Called when the serial-number cell is clicked to open row data popup */
+  onRowNumClick?: () => void
   showCheckbox: boolean
+  showRowNumber: boolean
+  rowClickJsonModal: boolean
   isMasterDetail: boolean
   isFullWidth: boolean
   fullWidthRenderer?: GridOptions<T>['fullWidthCellRenderer']
@@ -51,7 +55,9 @@ const RowRenderer = memo(<T extends RowData>(props: RowRendererProps<T>) => {
     node, columns, editingCell, activeCell, cellRange,
     onCellClick, onCellDoubleClick, onCellMouseDown, onCellMouseEnter,
     onCommitEdit, onCancelEdit, onRowClick, onToggleExpand, onCheckboxChange,
-    onCheckboxDoubleClick, showCheckbox, isMasterDetail, isFullWidth, fullWidthRenderer, detailRenderer,
+    onCheckboxDoubleClick, onRowNumClick,
+    showCheckbox, showRowNumber, rowClickJsonModal,
+    isMasterDetail, isFullWidth, fullWidthRenderer, detailRenderer,
     detailHeight, api, style, normalWidth, scrollLeft,
   } = props
 
@@ -165,6 +171,24 @@ const RowRenderer = memo(<T extends RowData>(props: RowRendererProps<T>) => {
         aria-selected={node.isSelected}
         data-row-index={node.rowIndex}
       >
+        {/* Serial number cell — always single-click, never editable */}
+        {showRowNumber && (
+          <div
+            className={`vgrid-row-num-cell${rowClickJsonModal ? ' vgrid-row-num-cell--clickable' : ''}`}
+            onClick={(e) => {
+              e.stopPropagation()
+              if (rowClickJsonModal) onRowNumClick?.()
+            }}
+            title={rowClickJsonModal ? 'Click to view row data' : undefined}
+            aria-label={`Row ${node.rowIndex + 1}`}
+          >
+            <span className="vgrid-row-num-cell__num">{node.rowIndex + 1}</span>
+            {rowClickJsonModal && (
+              <span className="vgrid-row-num-cell__hint" aria-hidden="true">👁</span>
+            )}
+          </div>
+        )}
+
         {/* Checkbox */}
         {showCheckbox && (
           <div

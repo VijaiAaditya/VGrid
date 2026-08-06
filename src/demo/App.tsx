@@ -218,11 +218,6 @@ export default function App() {
     ] : []
 
     return [
-      {
-        field: 'id', headerName: '#', width: 65, pinned: 'left',
-        sortable: true, resizable: false, filter: false, editable: false,
-        cellStyle: { color: 'var(--vg-text-muted)', fontSize: 11 },
-      },
 
       {
         headerName: 'Personal Info', groupId: 'personal',
@@ -511,7 +506,7 @@ export default function App() {
           pinnedBottomRowData={pinnedBottomRowData}
 
           // Feature toggles
-          rowClickJsonModal={true}
+          rowNumberColumn={{ clickToOpenJsonModal: true }}
           floatingFilter={floatingFilter}
 
           enableGlobalSearch={globalSearch}

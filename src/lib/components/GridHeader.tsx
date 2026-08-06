@@ -685,6 +685,7 @@ interface GridHeaderProps<T> {
   onFilterChange: (colId: string, value: string) => void
   onFilterOperatorChange: (colId: string, op: FloatingFilterOperator) => void
   showCheckbox: boolean
+  showRowNumber: boolean
   showColumnPicker?: boolean
   onColumnToggle?: (colId: string, visible: boolean) => void
   onColumnsChange?: (visibleCols: InternalColDef<T>[]) => void
@@ -703,7 +704,7 @@ export const GridHeader = memo(<T extends RowData>(props: GridHeaderProps<T>) =>
     columns, columnDefs, hasGroupedHeaders, sortModel, onSort, onResize, onMoveColumn,
     scrollLeft, showFloatingFilter, filterValues, filterOperators,
     onFilterChange, onFilterOperatorChange,
-    showCheckbox, showColumnPicker, onColumnToggle, onColumnsChange, allColumns,
+    showCheckbox, showRowNumber, showColumnPicker, onColumnToggle, onColumnsChange, allColumns,
     allSelected, someSelected, onSelectAll, api, headerHeight, uniqueValues,
   } = props
 
@@ -715,7 +716,9 @@ export const GridHeader = memo(<T extends RowData>(props: GridHeaderProps<T>) =>
   const pinnedRightWidth = useMemo(() => pinnedRight.reduce((s, c) => s + c._width, 0), [pinnedRight])
   const totalNormalWidth = useMemo(() => normal.reduce((s, c) => s + c._width, 0), [normal])
 
+  const rowNumWidth = showRowNumber ? 44 : 0
   const checkboxWidth = showCheckbox ? 40 : 0
+  const prefixWidth = rowNumWidth + checkboxWidth
 
   const renderHeaderCell = (col: InternalColDef<T>, idx: number) => {
     const isSerialCol = col.field === 'id' || col._colId === 'id' || col.colId === 'id' || idx === 0
@@ -728,7 +731,7 @@ export const GridHeader = memo(<T extends RowData>(props: GridHeaderProps<T>) =>
         onResize={onResize}
         onMoveColumn={onMoveColumn}
         api={api}
-        showColumnPicker={showColumnPicker && isSerialCol}
+        showColumnPicker={showColumnPicker && isSerialCol && !showRowNumber}
         onColumnToggle={onColumnToggle}
         onColumnsChange={onColumnsChange}
         allColumns={allColumns}
@@ -754,6 +757,27 @@ export const GridHeader = memo(<T extends RowData>(props: GridHeaderProps<T>) =>
 
         {/* Main header row */}
         <div className="vgrid-header-row" style={{ height: headerHeight }} role="row">
+          {/* Serial number column header */}
+          {showRowNumber && (
+            <div
+              className="vgrid-row-num-cell vgrid-row-num-cell--header"
+              aria-label="Row number"
+              title="Row number"
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+              {showColumnPicker && onColumnToggle && allColumns ? (
+                <ColumnPicker
+                  columns={allColumns}
+                  onColumnToggle={onColumnToggle}
+                  onColumnsChange={onColumnsChange}
+                  placement="header"
+                />
+              ) : (
+                '#'
+              )}
+            </div>
+          )}
+
           {/* Checkbox header */}
           {showCheckbox && (
             <HeaderCell
@@ -813,7 +837,7 @@ export const GridHeader = memo(<T extends RowData>(props: GridHeaderProps<T>) =>
             onFilterChange={onFilterChange}
             onFilterOperatorChange={onFilterOperatorChange}
             scrollLeft={scrollLeft}
-            checkboxWidth={checkboxWidth}
+            checkboxWidth={prefixWidth}
             uniqueValues={uniqueValues}
           />
         )}

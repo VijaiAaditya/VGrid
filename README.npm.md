@@ -17,14 +17,13 @@ export function App() {
     <VGrid
       rowData={[{ id: 1, name: 'Alice', avatar: 'https://example.com/pic.jpg', bio: '<b>Senior Dev</b>', video: 'https://example.com/intro.mp4', meta: { role: 'admin', active: true } }]}
       columnDefs={[
-        { field: 'id', headerName: '#' },
         { field: 'name' },
         { field: 'avatar', columnType: 'image' },
         { field: 'bio', columnType: 'html' },
         { field: 'video', columnType: 'video' },
         { field: 'meta', headerName: 'Config (JSON)', columnType: 'json', editable: true }
       ]}
-      rowClickJsonModal={true}
+      rowNumberColumn={{ clickToOpenJsonModal: true }}
       rowSelection="multiple"
       checkboxSelection={true}
     />
@@ -34,7 +33,7 @@ export function App() {
 
 ## Features
 - **Dynamic Multi-Select Column Picker (`ColumnPicker`)**: Multi-choose column picker dropdown with play-style icon (`▶`) and hover tooltip (`Choose Columns`). Toggling a column on appends it to the end of visible columns with `onColumnVisibilityChanged` callback event.
-- **Whole-Row Data JSON Popup (`rowClickJsonModal: true`)**: Double-clicking row index cell (`#`) or checkbox cell pops up the **entire raw row object with all existing fields** (including unpopulated or hidden data) in an interactive `JsonModal`.
+- **Whole-Row Data JSON Popup (`rowNumberColumn: true`, `rowClickJsonModal: true`)**: Prepends a dedicated serial-number (`#`) column. Single-clicking any row number cell pops up the **entire raw row object with all fields** in an interactive `JsonModal`. Cell has an eye icon visual hint on hover and is always read-only.
 
 - **Media & Content Column Types (`columnType`)**:
   - `'image'`: In-cell thumbnail & full resolution image viewer modal.
