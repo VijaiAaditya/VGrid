@@ -50,10 +50,7 @@ export function useVirtualizer(options: VirtualizerOptions): VirtualizerResult {
     totalSizeRef.current = total
   }, [count, getItemSize])
 
-  // Rebuild offsets whenever count changes
-  useEffect(() => {
-    buildOffsets()
-  }, [buildOffsets])
+
 
   // Binary search: find first item whose end > scrollPos
   const findStartIndex = useCallback((scrollPos: number): number => {
@@ -81,7 +78,10 @@ export function useVirtualizer(options: VirtualizerOptions): VirtualizerResult {
     const viewSize = horizontal ? el.clientWidth : el.clientHeight
 
     if (count === 0) {
-      setRange([0, -1])
+      if (rangeRef.current[0] !== 0 || rangeRef.current[1] !== -1) {
+        rangeRef.current = [0, -1]
+        setRange([0, -1])
+      }
       return
     }
 
@@ -99,6 +99,12 @@ export function useVirtualizer(options: VirtualizerOptions): VirtualizerResult {
       setRange([startIdx, endIdx])
     }
   }, [count, overscan, horizontal, containerRef, findStartIndex, buildOffsets])
+
+  // Rebuild offsets and recompute range whenever count changes
+  useEffect(() => {
+    buildOffsets()
+    computeRange()
+  }, [count, buildOffsets, computeRange])
 
   // RAF-batched scroll handler — scroll events fire dozens/second, we batch them
   const rafRef = useRef<number | null>(null)

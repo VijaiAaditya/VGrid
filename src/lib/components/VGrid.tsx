@@ -537,43 +537,37 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
 
 
   const handleFilterChange = useCallback((colId: string, value: string) => {
-    setFilterValues((prev) => {
-      const next = { ...prev, [colId]: value }
-      const newModel: FilterModel = {}
-      for (const [cid, val] of Object.entries(next)) {
-        if (val.trim() && val !== '') {
-          const col = columns.find((c) => c._colId === cid)
-          const isSelect = col?.filter === 'select' || col?.filterParams?.type === 'select'
-          const isExcel  = col?.filter === 'excel'  || col?.filterParams?.type === 'excel'
-          const op: FilterModel[string]['operator'] = isExcel ? 'in'
-            : isSelect ? 'equals'
-            : (filterOperators[cid] ?? 'contains') as FilterModel[string]['operator']
-          newModel[cid] = { colId: cid, operator: op, value: val }
-        }
+    const nextFilterValues = { ...filterValues, [colId]: value }
+    setFilterValues(nextFilterValues)
+
+    const newModel: FilterModel = {}
+    for (const [cid, val] of Object.entries(nextFilterValues)) {
+      if (val.trim() !== '') {
+        const col = columns.find((c) => c._colId === cid)
+        const isSelect = col?.filter === 'select' || col?.filterParams?.type === 'select'
+        const isExcel  = col?.filter === 'excel'  || col?.filterParams?.type === 'excel'
+        const op: FilterModel[string]['operator'] = isExcel ? 'in'
+          : isSelect ? 'equals'
+          : (filterOperators[cid] ?? 'contains') as FilterModel[string]['operator']
+        newModel[cid] = { colId: cid, operator: op, value: val }
       }
-      useStore.getState().setFilterModel(newModel)
-      return next
-    })
-    onFilterChanged?.({ filterModel: useStore.getState().filterModel })
-  }, [columns, filterOperators, onFilterChanged])
+    }
+    useStore.getState().setFilterModel(newModel)
+    onFilterChanged?.({ filterModel: newModel })
+  }, [columns, filterOperators, filterValues, onFilterChanged])
 
   const handleFilterOperatorChange = useCallback((colId: string, op: FloatingFilterOperator) => {
-    setFilterOperators((prev) => {
-      const next = { ...prev, [colId]: op }
-      // Re-apply existing text value with the new operator immediately
-      setFilterValues((fv) => {
-        const currentVal = fv[colId] ?? ''
-        if (currentVal.trim()) {
-          const newModel = { ...useStore.getState().filterModel }
-          newModel[colId] = { colId, operator: op as FilterModel[string]['operator'], value: currentVal }
-          useStore.getState().setFilterModel(newModel)
-          onFilterChanged?.({ filterModel: newModel })
-        }
-        return fv
-      })
-      return next
-    })
-  }, [onFilterChanged])
+    const nextOperators = { ...filterOperators, [colId]: op }
+    setFilterOperators(nextOperators)
+
+    const currentVal = filterValues[colId] ?? ''
+    if (currentVal.trim() !== '') {
+      const newModel = { ...useStore.getState().filterModel }
+      newModel[colId] = { colId, operator: op as FilterModel[string]['operator'], value: currentVal }
+      useStore.getState().setFilterModel(newModel)
+      onFilterChanged?.({ filterModel: newModel })
+    }
+  }, [filterOperators, filterValues, onFilterChanged])
 
 
   // ── Advanced filter builder apply ─────────────────────────────────────────
