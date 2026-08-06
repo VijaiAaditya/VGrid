@@ -441,9 +441,13 @@ You can also trigger exports using the Grid API on the ref:
 // Using the grid ref API
 apiRef.current?.exportDataAsXlsx({
   fileName: 'grid-export.xlsx',
-  exportMode: 'all', // export all rows unfiltered
+  exportMode: 'all', // bypasses the confirmation popup and immediately exports all rows
 })
 ```
+
+> [!TIP]
+> If `exportMode` is omitted when triggering `exportDataAsXlsx(params)`, V-Grid will automatically open a confirmation modal. The modal displays choice cards showing exact row counts for **Filtered Data** and **Full Data**, along with a text field to customize the output filename (which defaults to your file title with a local timestamp appended, e.g. `grid-export_20260806_2216.xlsx`).
+
 
 ### 2. Styles Import (`v-grid/styles`)
 Import styles once at root entry:
