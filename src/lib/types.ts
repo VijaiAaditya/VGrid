@@ -174,6 +174,13 @@ export interface ColDef<T = RowData> {
   cellEditor?: CellEditorType
   cellEditorParams?: CellEditorParams
   singleClickEdit?: boolean
+  /**
+   * Controls how the JSON popup modal is triggered for `columnType: 'json'` columns.
+   * - `'dblclick'` (default) — double-click opens the modal
+   * - `'click'`              — single click opens the modal
+   * - `'none'`               — modal is disabled; the ⤢ expand button is hidden
+   */
+  jsonTrigger?: 'click' | 'dblclick' | 'none'
 
   // ── Column Groups ────────────────────────────────────────────────────────
   /** Child columns — makes this a column group header */

@@ -40,6 +40,9 @@ export function App() {
   - `'image'`: In-cell thumbnail & full resolution image viewer modal.
   - `'html'`: In-cell link & sanitized HTML rendering modal.
   - `'video'`: In-cell link & video player modal with clickable link.
+  - `'json'`: In-cell JSON preview + interactive popup editor modal (double-click or `⤢` button). **Single click is intentionally disabled** — inline editing is always popup-only. Use `jsonTrigger: 'none'` to make a JSON column display-only.
+
+- **Pagination**: Built-in page navigation bar with first/prev/next/last buttons, page-size selector, page number input, and row count summary. Configure with `pagination`, `paginationPageSize`, and `paginationPageSizeOptions` props. React to changes via `onPaginationChanged`.
 
 ---
 

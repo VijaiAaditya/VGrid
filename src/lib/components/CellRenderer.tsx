@@ -134,20 +134,23 @@ export const GridCell = memo(<T extends RowData>(props: CellProps<T>) => {
     } else {
       jsonText = value == null ? '' : String(value)
     }
+    const jsonTrigger = col.jsonTrigger ?? 'dblclick'
     displayValue = (
       <div className="vgrid-cell-json">
         <span className="vgrid-cell-json__text" title={jsonText}>{jsonText || '{ }'}</span>
-        <button
-          type="button"
-          className="vgrid-cell-json__expand-btn"
-          onClick={(e) => {
-            e.stopPropagation()
-            setIsJsonModalOpen(true)
-          }}
-          title="Expand JSON Popup (Double click)"
-        >
-          ⤢
-        </button>
+        {jsonTrigger !== 'none' && (
+          <button
+            type="button"
+            className="vgrid-cell-json__expand-btn"
+            onClick={(e) => {
+              e.stopPropagation()
+              setIsJsonModalOpen(true)
+            }}
+            title={jsonTrigger === 'click' ? 'Expand JSON Popup (Click)' : 'Expand JSON Popup (Double click)'}
+          >
+            ⤢
+          </button>
+        )}
       </div>
     )
   } else if (isImageCol) {
@@ -213,13 +216,15 @@ export const GridCell = memo(<T extends RowData>(props: CellProps<T>) => {
   const pos: CellPosition = { rowIndex: node.rowIndex, colId: col._colId }
 
   const handleDoubleClick = useCallback((e: React.MouseEvent) => {
+    // For JSON cols: only open on dblclick if trigger is 'dblclick' (default)
     if (isJsonCol) {
-      setIsJsonModalOpen(true)
+      const jsonTrigger = col.jsonTrigger ?? 'dblclick'
+      if (jsonTrigger === 'dblclick') setIsJsonModalOpen(true)
     } else if (isImageCol || isHtmlCol || isVideoCol) {
       setIsMediaModalOpen(true)
     }
     onCellDoubleClick(pos, e)
-  }, [isJsonCol, isImageCol, isHtmlCol, isVideoCol, onCellDoubleClick, pos])
+  }, [isJsonCol, isImageCol, isHtmlCol, isVideoCol, col.jsonTrigger, onCellDoubleClick, pos])
 
   // Cell class
   const customClass = typeof col.cellClass === 'function'
@@ -267,6 +272,13 @@ export const GridCell = memo(<T extends RowData>(props: CellProps<T>) => {
 
   const mediaType: 'image' | 'html' | 'video' = isImageCol ? 'image' : isHtmlCol ? 'html' : 'video'
 
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    // JSON columns: single click is disabled — only expand button or double-click opens the popup.
+    // Returning early prevents setActiveCell, so the cell never becomes focused/editable.
+    if (isJsonCol) return
+    onCellClick(pos, e)
+  }, [isJsonCol, onCellClick, pos])
+
   return (
     <div
       className={cellClass}
@@ -274,7 +286,7 @@ export const GridCell = memo(<T extends RowData>(props: CellProps<T>) => {
       role="gridcell"
       tabIndex={isFocused ? 0 : -1}
       title={tooltip}
-      onClick={(e) => onCellClick(pos, e)}
+      onClick={handleClick}
       onDoubleClick={handleDoubleClick}
       onMouseDown={(e) => onCellMouseDown(pos, e)}
       onMouseEnter={() => onCellMouseEnter(pos)}

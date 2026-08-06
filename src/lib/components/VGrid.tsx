@@ -689,7 +689,8 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
     const isEditable = typeof col.editable === 'function'
       ? col.editable({ value, data: node.data, rowIndex: node.rowIndex })
       : (col.editable ?? editable)
-    if ((singleClickEdit || col.singleClickEdit) && isEditable) {
+    const isJsonCol = col.columnType === 'json' || col.cellEditor === 'json'
+    if ((singleClickEdit || col.singleClickEdit) && isEditable && !isJsonCol) {
       useStore.getState().startEditing(pos)
     }
   }, [columns, displayedRows, editable, singleClickEdit, onCellClicked])
@@ -718,7 +719,8 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
     const isEditable = typeof col.editable === 'function'
       ? col.editable({ value, data: node.data, rowIndex: node.rowIndex })
       : (col.editable ?? editable)
-    if (!singleClickEdit && !col.singleClickEdit && isEditable && !isIndexCol) {
+    const isJsonCol = col.columnType === 'json' || col.cellEditor === 'json'
+    if (!singleClickEdit && !col.singleClickEdit && isEditable && !isIndexCol && !isJsonCol) {
       useStore.getState().startEditing(pos)
     }
 
@@ -873,7 +875,8 @@ function VGridInner<T extends RowData>(props: GridOptions<T>): React.ReactElemen
           const isEditable = typeof col.editable === 'function'
             ? col.editable({ value, data: node.data, rowIndex: ac.rowIndex })
             : (col.editable ?? editable)
-          if (isEditable) useStore.getState().startEditing(ac)
+          const isJsonCol = col.columnType === 'json' || col.cellEditor === 'json'
+          if (isEditable && !isJsonCol) useStore.getState().startEditing(ac)
         }
       } else if (e.key === 'Escape') {
         useStore.getState().stopEditing()

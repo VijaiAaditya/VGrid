@@ -162,6 +162,20 @@ const myContextMenuItems: ContextMenuItem<Employee>[] = [
 | `paginationPageSize` | `number` | `10` | Number of rows displayed per page. |
 | `paginationPageSizeOptions` | `number[]` | `[5, 10, 20, 50]` | Dropdown choices available for page size selection. |
 
+The pagination bar includes: **first / previous / next / last** navigation buttons, a **page-size selector** dropdown, a **page number input**, and a **row count summary** (`Showing X–Y of N rows`).
+
+Use the `onPaginationChanged` callback to react to page changes:
+
+```tsx
+<VGrid
+  pagination={true}
+  paginationPageSize={20}
+  paginationPageSizeOptions={[10, 20, 50, 100]}
+  onPaginationChanged={(e) =>
+    console.log(`Page ${e.currentPage} of ${e.totalPages} — ${e.totalRows} total rows`)
+  }
+/>
+
 ### Grouping, Tree & Master-Detail Props
 | Prop | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
@@ -198,6 +212,7 @@ const myContextMenuItems: ContextMenuItem<Employee>[] = [
 | `columnType` | `'string' \| 'number' \| 'date' \| 'boolean' \| 'json' \| 'image' \| 'html' \| 'video'` | Declares column data type. Supports JSON, image, html, and video popups. |
 | `cellEditor` | `'text' \| 'number' \| 'select' \| 'date' \| 'textarea' \| 'json' \| 'image' \| 'html' \| 'video'` | Built-in cell editor type when entering edit mode. |
 | `cellEditorParams` | `{ options?: string[] }` | Option choices passed to `'select'` cell editor. |
+| `jsonTrigger` | `'dblclick' \| 'none'` | Controls how the JSON popup opens for `columnType: 'json'` columns. `'dblclick'` (default) opens on double-click; `'none'` disables the modal entirely. |
 | `cellRenderer` | `(params: CellRendererParams<T>) => ReactNode` | Custom React element renderer for cells in this column. |
 | `headerRenderer` | `(params: HeaderRendererParams<T>) => ReactNode` | Custom React renderer for the column header cell. |
 | `valueGetter` | `(params: ValueGetterParams<T>) => any` | Function to compute dynamic or nested cell values. |
@@ -318,10 +333,13 @@ const columnDefs = [
 
 ### JSON Column Type (`columnType: 'json'`)
 
-When a column is configured with `columnType: 'json'`, V-Grid automatically handles structured object/array data:
+When a column is configured with `columnType: 'json'`, V-Grid automatically handles structured object/array data with a **popup-only** editing model:
+
 - **In-Cell Preview**: Displays a clean, single-line JSON string preview with an expand icon button (`⤢`).
-- **Interactive Popup Modal**: Double-clicking the cell or clicking the expand button (`⤢`) opens an interactive JSON viewer & editor modal dialog.
-- **Modal Capabilities**: Includes JSON Prettifying (2-space formatting), Minifying, Copying to Clipboard, and live JSON syntax validation when editing.
+- **Single click**: Does nothing — the cell does not become focused or editable on single click.
+- **Popup Modal** (double-click the cell, or click the `⤢` button): Opens the interactive JSON viewer & editor modal.
+- **No Inline Editing**: Inline text editing is fully disabled for JSON columns regardless of the grid's `editable` prop. All edits happen exclusively inside the popup modal.
+- **Modal Capabilities**: JSON Prettify (2-space), Minify, Copy to Clipboard, and live syntax validation.
 
 ```tsx
 const columnDefs = [
@@ -329,10 +347,22 @@ const columnDefs = [
     field: 'payload',
     headerName: 'Event Data (JSON)',
     columnType: 'json',
-    editable: true,
+    editable: true,   // enables Save button in the popup modal
     width: 200,
   },
 ]
+```
+
+#### `jsonTrigger` — Control how the popup opens
+
+| Value | Behaviour |
+| :--- | :--- |
+| `'dblclick'` *(default)* | Double-clicking the cell body opens the popup. The `⤢` button also opens it. |
+| `'none'` | The popup and the `⤢` expand button are completely hidden (view-only). |
+
+```tsx
+// Disable popup entirely — display only, no editing
+{ field: 'payload', columnType: 'json', jsonTrigger: 'none' }
 ```
 
 
